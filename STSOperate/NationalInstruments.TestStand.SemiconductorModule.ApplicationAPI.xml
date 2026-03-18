@@ -1,0 +1,2289 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NationalInstruments.TestStand.SemiconductorModule.ApplicationAPI</name>
+    </assembly>
+    <members>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingAlgorithmSettings">
+            <summary>
+            Provides the standard and custom settings associated with the current PAT algorithm.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingAlgorithmSettings.GetStringCustomSettingValue(System.String)">
+            <summary>
+            Returns the value of the string custom setting specified by <paramref name="settingName"/>.
+            </summary>
+            <param name="settingName">The name of the string setting to return.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingAlgorithmSettings.GetNumberCustomSettingValue(System.String)">
+            <summary>
+            Returns the value of the number custom setting specified by <paramref name="settingName"/>.
+            </summary>
+            <param name="settingName">The name of the number setting to return.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingAlgorithmSettings.GetBooleanCustomSettingValue(System.String)">
+            <summary>
+            Returns the value of the Boolean custom setting specified by <paramref name="settingName"/>.
+            </summary>
+            <param name="settingName">The name of the Boolean setting to return.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingAlgorithmSettings.GetAbsolutePathCustomSettingValue(System.String)">
+            <summary>
+            Resolves the resolved absolute path of the path custom settings specified by <paramref name="settingName"/>.
+            </summary>
+            <param name="settingName">The name of the path setting to resolve.</param>
+            <returns></returns>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingCustomizationGroup">
+            <summary>
+            Contains a base test and its associated PAT tests.
+            Use the methods and properties on this interface to customize the default PAT tests and to create
+            new custom PAT tests for a specific base test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingCustomizationGroup.BaseTest">
+            <summary>
+            The base test that has either dynamic or static PAT enabled.
+            When the Semiconductor Multi Test step performs the base test, it copies the data value for the base test to the data values for all
+            of the PAT tests associated with the base test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingCustomizationGroup.DynamicPartAverageTestingTest">
+            <summary>
+            The default test to perform for dynamic PAT.
+            This property is null if dynamic PAT is disabled on the base test.
+            You can set properties on the dynamic part average test to customize how it executes.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingCustomizationGroup.StaticPartAverageTestingTest">
+            <summary>
+            The default test to perform for static PAT.
+            This property is null if static PAT is disabled on the base test.
+            You can set properties on the static part average test to customize how it executes.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingCustomizationGroup.AddCustomLogTest(System.Int32,System.Int32,System.String)">
+            <summary>
+            Creates a custom PAT test to log a single data value.
+            </summary>
+            <param name="partAverageTestId">An identifier for the test. The identifier should be unique for all the custom tests created for the base test.
+            Use the same identifier for the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingEvaluationGroup.GetCustomTest(System.Int32)"/> to get a reference to the created test.
+            </param>
+            <param name="testNumber">The test number to use for the new test.</param>
+            <param name="testName">The test name to use for the new test.</param>
+            <returns>The new custom log test. You can set additional properties on the newly created test.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingCustomizationGroup.AddCustomLimitComparisonTest(System.Int32,System.Int32,System.String,System.Int32)">
+            <summary>
+            Creates a custom PAT test to compare a data value to low and high limits.
+            </summary>
+            <param name="partAverageTestId">An identifier for the test. The identifier should be unique for all the custom tests created for the base test.
+            Use the same identifier for the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingEvaluationGroup.GetCustomTest(System.Int32)"/> to get a reference to the created test.
+            </param>
+            <param name="testNumber">The test number to use for the new test.</param>
+            <param name="testName">The test name to use for the new test.</param>
+            <param name="softwareBinNumber">The software bin to assign to the DUT if the test fails.</param>
+            <returns>The new custom numeric limit test. You can set additional properties on the newly created test.</returns>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingEvaluationGroup">
+            <summary>
+            Contains a base test result and its associated PAT tests.
+            Use the properties and methods on this interface to evaluate the default PAT tests and the custom PAT tests that you created
+            in the CustomizePartAverageTesting callback sequence.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingEvaluationGroup.BaseTestResult">
+            <summary>
+            The result obtained when the Semiconductor Multi Test step performed the base test.
+            When the Semiconductor Multi Test step performs the base test, it copies the data value for the base test to the data values for all
+            of the PAT tests associated with the base test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingEvaluationGroup.DynamicPartAverageTestingTest">
+            <summary>
+            The default test to evaluate for dynamic PAT.
+            This property is null if dynamic PAT is disabled on the base test.
+            You can set properties on the dynamic PAT test and call <see cref="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.Evaluate"/>
+            to perform the test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingEvaluationGroup.StaticPartAverageTestingTest">
+            <summary>
+            The default test to evaluate for static PAT.
+            This property is null if static PAT is disabled on the base test.
+            You can set properties on the static PAT test and call <see cref="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.Evaluate"/>
+            to perform the test.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingEvaluationGroup.GetCustomTest(System.Int32)">
+            <summary>
+            Gets one of the custom PAT tests that you created in the CustomizePartAverageTesting callback sequence.
+            </summary>
+            <param name="partAverageTestId">The unique identifier for the test.
+            Use the same identifier that you used to create the test in the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingCustomizationGroup.AddCustomLimitComparisonTest(System.Int32,System.Int32,System.String,System.Int32)"/>
+             or <see cref="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingCustomizationGroup.AddCustomLogTest(System.Int32,System.Int32,System.String)"/>.</param>
+            <returns>The custom PAT test. You can set properties on the test and call <see cref="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.Evaluate"/>
+            to evaluate the test.</returns>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingStaticLimitLoader">
+            <summary>
+            Provides a mechanism for loading a standard PAT static limits file.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingStaticLimitLoader.LoadStaticLimits(System.String)">
+            <summary>
+            Loads the standard PAT static limits file and returns the limits.
+            </summary>
+            <param name="staticLimitsFilePath">The absolute path of the static limits file.</param>
+            <returns>The test limits loaded from the file.</returns>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingStaticLimits">
+            <summary>
+            Contains the test limits loaded from a static limits file.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingStaticLimits.GetLowLimit(System.Int32)">
+            <summary>
+            Gets the low limit for the specified test number.
+            This method throws an exception if limits file does not contain limits for the specified test number.
+            </summary>
+            <param name="testNumber">The test number.</param>
+            <returns>The low limit for the specified test number.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingStaticLimits.GetHighLimit(System.Int32)">
+            <summary>
+            Gets the high limit for the specified test number.
+            This method throws an exception if limits file does not contain limits for the specified test number.
+            </summary>
+            <param name="testNumber">The test number.</param>
+            <returns>The high limit for the specified test number.</returns>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.ISetupPartAverageTestingCallbackArgs">
+            <summary>
+            Contains the argument data that the Semiconductor Module passes to the SetupPartAverageTesting callback sequence.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISetupPartAverageTestingCallbackArgs.SemiconductorModuleManager">
+            <summary>
+            A reference to the active Semiconductor Module Manager.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISetupPartAverageTestingCallbackArgs.StaticLimitLoader">
+            <summary>
+            A reference to an object that loads a standard static PAT limits file.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISetupPartAverageTestingCallbackArgs.PartAverageTestingAlgorithmSettings">
+            <summary>
+            The settings used to perform part average tests.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISetupPartAverageTestingCallbackArgs.SiteIndex">
+            <summary>
+            The index of the current site.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.ICustomizePartAverageTestingCallbackArgs">
+            <summary>
+            Contains the argument data that the Semiconductor Module passes to the CustomizePartAverageTesting callback sequence.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ICustomizePartAverageTestingCallbackArgs.PartAverageTestingCustomizationGroups">
+            <summary>
+            The list of part average test customization groups that the CustomizePartAverageTesting callback sequence can customize.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.IPerformPartAverageTestingCallbackArgs">
+            <summary>
+            Contains the argument data that the Semiconductor Module passes to the PerformPartAverageTesting callback sequence.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPerformPartAverageTestingCallbackArgs.AllTestsPassed">
+            <summary>
+            Indicates whether all tests passed up to the point when the Semiconductor Module calls the PerformPartAverageTesting callback sequence.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPerformPartAverageTestingCallbackArgs.PartAverageTestingEvaluationGroups">
+            <summary>
+            The list of part average test evaluation groups that the PerformPartAverageTesting callback sequence can evaluate.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.IBatchRuntimeData">
+            <summary>
+            Contains run-time data for the current batch of parts being tested.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IBatchRuntimeData.StartOfTestTime">
+            <summary>
+            The time that the tester received the start-of-test (SOT) signal from the handler/prober driver for the current batch.
+            When using the Batch process model, this property value is valid in the Model Plugin - Pre Batch entry point and later.
+            When using the Sequential process model, this property value is valid in the Model Plugin - Pre UUT entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IBatchRuntimeData.EndOfTestTime">
+            <summary>
+            The time that the tester sent the end-of-test (EOT) signal to the handler/prober driver for the current batch.
+            When using the Batch process model, this property value is valid in the Model Plugin - Batch Done entry point and later.
+            When using the Sequential process model, this property value is valid in the Model Plugin - UUT Done entry point and later.
+            You can calculate the socket time by subtracting StartOfTestTime from EndOfTestTime. However, ILotStatistics.LastSocketTime
+            returns a higher precision alternative for this measurement.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IBatchRuntimeData.WillRetest">
+            <summary>
+            Returns true if the tester will retest the current parts in the next batch because the operator requested a retest.
+            When using the Batch process model, this property value is valid in the Model Plugin - Batch Done entry point and later.
+            When using the Sequential process model, this property value is valid in the Model Plugin - UUT Done entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IBatchRuntimeData.IsRetesting">
+            <summary>
+            Returns true if the tester is currently retesting the same parts from the previous batch because the operator requested a retest.
+            When using the Batch process model, this property value is valid in the Model Plugin - Pre Batch entry point and later.
+            When using the Sequential process model, this property value is valid in the Model Plugin - Pre UUT entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IBatchRuntimeData.IsStartOfWafer">
+            <summary>
+            Returns true if the current batch is the first batch of parts of a new wafer.
+            This property remains true if the first batch of parts are retested.
+            When using the Batch process model, this property value is valid in the Model Plugin - Pre Batch entry point and later.
+            When using the Sequential process model, this property value is valid in the Model Plugin - Pre UUT entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IBatchRuntimeData.IsEndOfWafer">
+            <summary>
+            Returns true if the current batch is the last batch of parts of the current wafer.
+            This property is true after the prober driver indicates that it has tested the last die on the wafer.
+            When using the Batch process model, this property value is valid in the Model Plugin - Batch Done entry point and later.
+            When using the Sequential process model, this property value is valid in the Model Plugin - UUT Done entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IBatchRuntimeData.WaferRuntimeData">
+            <summary>
+            Returns an object that contains information about the current wafer.
+            This property always returns the same object whose content changes with each new wafer.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IBatchRuntimeData.OnWafer">
+            <summary>
+            Returns true if the current batch is part of a wafer.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.Internal.IBatchRuntimeDataInternal">
+            <summary>
+            Internal interface for TSM. Do not use this interface
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.Internal.IBatchRuntimeDataInternal.StartOfTestTimeInLabViewSeconds">
+            <summary>
+            Internal property for TSM. Do not access this property.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.Internal.IBatchRuntimeDataInternal.EndOfTestTimeInLabViewSeconds">
+            <summary>
+            Internal property for TSM. Do not access this property.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.Internal.CrossAppDomainObject">
+            <summary>
+            Internal class for TSM. Do not use this class.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.CrossAppDomainObject.Finalize">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.CrossAppDomainObject.Disconnect">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.CrossAppDomainObject.InitializeLifetimeService">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.CrossAppDomainObject.Dispose">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.CrossAppDomainObject.Dispose(System.Boolean)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport">
+            <summary>
+            Internal interface for TSM. Do not use this interface.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyLotConfigured(NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.PropertyObject)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyTestSocketBinningComplete(System.Int32,NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.PropertyObject)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.RecordEndOfTestTimeBatchDone">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.RecordEndOfTestTimeUUTDone(System.Int32,System.Boolean)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyStationConfigured(NationalInstruments.TestStand.Interop.API.PropertyObject)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyControllerStarted(NationalInstruments.TestStand.Interop.API.Execution,System.Object,System.Object,System.Int32[],NationalInstruments.TestStand.Interop.API.PropertyObject,System.Boolean)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyControllerEnded">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyTestSocketStarted(System.Int32,NationalInstruments.TestStand.Interop.API.Execution,NationalInstruments.TestStand.Interop.API.PropertyObject,System.Boolean)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyLotComplete">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyTestSocketEnded(System.Int32)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyPreBatchBeforeStartOfTest(NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.PropertyObject)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyPreBatchAfterStartOfTest(NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.PropertyObject,System.Boolean)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyBatchDoneBeforeEndOfTest(NationalInstruments.TestStand.Interop.API.SequenceContext,NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.PropertyObject)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyBatchDoneAfterEndOfTest(NationalInstruments.TestStand.Interop.API.PropertyObject)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyPreUUTBeforeStartOfTest(System.Int32,System.Boolean,NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.PropertyObject)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyPreUUTAfterStartOfTest(System.Int32,System.Boolean,NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.PropertyObject)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyUUTDoneBeforeEndOfTest(System.Int32,System.Boolean,NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.SequenceContext)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyUUTDoneAfterEndOfTest(NationalInstruments.TestStand.Interop.API.PropertyObject)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyPostUUT(NationalInstruments.TestStand.Interop.API.PropertyObject)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyPreUUT(System.Boolean,System.Int32,NationalInstruments.TestStand.Interop.API.PropertyObject)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.NotifyBeginBeforeHandlerSetup(NationalInstruments.TestStand.Interop.API.SequenceFile,NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.PropertyObject,NationalInstruments.TestStand.Interop.API.PropertyObject)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.GetHandlerProberDriverData(NationalInstruments.TestStand.Interop.API.PropertyObject,System.Boolean@)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerCoreModelSupport.SetReportFilePath(NationalInstruments.TestStand.SemiconductorModule.Internal.ResultProcessorType,System.String,System.Int32)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.Internal.ResultProcessorType">
+            <summary>
+            The type of a result processor.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.Internal.ResultProcessorType.Stdf">
+            <summary>
+            Result processor that generates an STDF report
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.Internal.ResultProcessorType.LotSummary">
+            <summary>
+            Result processor that generates an lot summary report
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.Internal.ResultProcessorType.DebugTestResults">
+            <summary>
+            Result processor that generates a Debug Test Results Log
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.Internal.ResultProcessorType.CSVTestResults">
+            <summary>
+            Result processor that generates a CSV Test Results Log
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerUnreleased">
+            <summary>
+            Interface that contains unsupported, not-yet-released methods. This interface might not exist
+            in future versions of TestStand Semiconductor Module.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerUnreleased.NewEditTimeSemiconductorModuleContext(System.String)">
+            <summary>
+            Creates a ISemiconductorModuleContext for use at edit-time.
+            The context contains all sites and all pins in the pin map.
+            </summary>
+            <param name="pinMapFilePath">Absolute path of the pin map file</param>
+            <returns>An instance of ISemiconductorModuleContext</returns>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerFactoryInternal">
+            <summary>
+            Internal interface for TSM. Do not use this interface.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.ISemiconductorModuleManagerFactoryInternal.CreateSemiconductorModuleManager(NationalInstruments.TestStand.Interop.API.IEngine,NationalInstruments.TestStand.Interop.UI.ISequenceFileViewMgr,System.Boolean)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.Internal.SemiconductorModuleManagerFactoryInternal">
+            <summary>
+            Internal class for TSM. Do not use this class.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.SemiconductorModuleManagerFactoryInternal.CreateSemiconductorModuleManager(NationalInstruments.TestStand.Interop.API.IEngine,NationalInstruments.TestStand.Interop.UI.ISequenceFileViewMgr,System.Boolean)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.SemiconductorModuleManagerFactoryInternal.CreateSemiconductorModuleManagerForTSMTestExecutive(NationalInstruments.TestStand.Interop.API.IEngine)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.Internal.SemiconductorModuleManagerFactoryInternal.GetSemiconductorModuleManager(NationalInstruments.TestStand.Interop.API.IEngine)">
+            <summary>
+            Internal method for TSM. Do not call this method.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.Internal.ISiteRuntimeDataInternal">
+            <summary>
+            Internal interface for TSM. Do not use this interface
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.Internal.ISiteRuntimeDataInternal.StartOfTestTimeInLabViewSeconds">
+            <summary>
+            Internal property for TSM. Do not access this property.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.Internal.ISiteRuntimeDataInternal.EndOfTestTimeInLabViewSeconds">
+            <summary>
+            Internal property for TSM. Do not access this property.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.Internal.ILotStatisticsInternal">
+            <summary>
+            Internal interface for TSM. Do not use this interface
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.Internal.ILotStatisticsInternal.LotStartTimeInLabViewSeconds">
+            <summary>
+            Internal property for TSM. Do not access this property.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.Internal.ILotStatisticsInternal.LotEndTimeInLabViewSeconds">
+            <summary>
+            Internal property for TSM. Do not access this property.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.CommandType">
+            <summary>
+            Contains the types of commands available to the operator interface. Call <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetCommand(NationalInstruments.TestStand.SemiconductorModule.CommandType)"/> to obtain a reference to a command.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.StartLot">
+            <summary>
+            Starts testing a new lot of parts. 
+            This command is disabled if the STS Maintenance Software 18.0 or later is installed and is running operations on the tester.
+            This command is enabled once you successfully configure the lot in the Configure Lot Settings dialog box, or if the testing of a lot is not in progress and the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ConfigureLotWhenStartingLot"/> property is true.
+            Executing this command changes the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState"/> property value to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Testing"/> before the call to the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ICommand.Execute"/> method completes.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.StartResumeLot">
+            <summary>
+            Starts testing a new lot of parts or resumes a paused lot. 
+            This command is enabled when testing of the lot is currently paused and the STS Maintenance Software is running an operation on the tester, but you cannot start a lot execution while the STS Maintenance Software 18.0 or later is running operations on the tester.
+            This command is enabled once you successfully configure the lot in the Configure Lot Settings dialog box, if testing of a lot is not in progress and the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ConfigureLotWhenStartingLot"/> property is true, or when a lot is paused.
+            Executing this command changes the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState"/> property value to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Testing"/>, but the TestingState property does not necessarily change before the call to <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ICommand.Execute"/> completes.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.StartPauseResumeLot">
+            <summary>
+            Starts testing a new lot of parts, pauses a currently testing lot, or resumes a paused lot. 
+            This command is enabled when testing of the lot has begun or is paused and the STS Maintenance Software is running an operation on the tester, but you cannot start a lot execution while the STS Maintenance Software 18.0 or later is running operations on the tester.
+            This command is enabled once you successfully configure the lot in the Configure Lot Settings dialog box, if testing of a lot is not in progress and the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ConfigureLotWhenStartingLot"/> property is true, when testing of the lot has begun and has not yet completed, except when the lot is in the process of pausing.
+            Executing this command changes the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState"/> property value to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Testing"/> or <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Paused"/>, but the TestingState property does not necessarily change before the call to <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ICommand.Execute"/>  completes.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.PerformSinglePartTest">
+            <summary>
+            Tests a single part on each site and then pauses testing. 
+            This command is enabled when testing of the lot is currently paused and the STS Maintenance Software is running an operation on the tester, but you cannot start a lot execution while the STS Maintenance Software 18.0 or later is running operations on the tester.
+            This command is enabled once you successfully configure the lot in the Configure Lot Settings dialog box, if testing of a lot is not in progress and the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ConfigureLotWhenStartingLot"/> property is true, or if testing is currently paused.
+            If testing is paused when you execute this command, testing resumes long enough to test a single part on each site.
+            If testing has not yet started when you execute this command, testing starts and pauses after testing a single part on each site.
+            This command changes the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState"/> property value to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Testing"/> while it executes the tests, but the TestingState property does not necessarily change before the call to <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ICommand.Execute"/>  completes.
+            The TestingState property returns to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Paused"/> when each site completes testing a single part.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.PerformSinglePartRetest">
+            <summary>
+            Retests the last part on each site then pauses testing.
+            This command is enabled when testing of the lot has begun, has not yet completed, and is currently paused.
+            This command changes the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState"/> property value to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Testing"/> while it executes the tests, but the TestingState property does not necessarily change before the call to <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ICommand.Execute"/>  completes.
+            The TestingState property returns to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Paused"/> when each site completes testing a single part.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.PauseLot">
+            <summary>
+            Pauses testing of the lot. 
+            This command is enabled when testing of the lot has begun, has not yet completed, and is not currently paused.
+            This command results in the TestingState property changing to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Paused"/>, but the TestingState property does not necessarily change before the call to <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ICommand.Execute"/> completes.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.PauseResumeLot">
+            <summary>
+            Pauses a currently testing lot or resumes a paused lot. 
+            This command is enabled when testing of the lot has begun and has not yet completed, except when the lot is in the process of pausing.
+            This command results in the TestingState property changing to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Testing"/> or <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Paused"/>, but the TestingState property does not necessarily change before the call to <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ICommand.Execute"/> completes.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.ResumeLot">
+            <summary>
+            Resumes a paused lot. 
+            This command results in the TestingState property changing to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Testing"/>, but the TestingState property does not necessarily change before the call to <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ICommand.Execute"/> completes.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.EndLot">
+            <summary>
+            Ends testing of the lot. 
+            This command is enabled when testing of the lot has begun and has not yet completed. The <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ICommand.Execute"/> method does not wait for testing to complete before returning.
+            After executing this command, the TestingState property changes to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Idle"/>.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.LoginLogout">
+            <summary>
+            Launches the TestStand login dialog box when no user is logged in. Otherwise, logs out the current user. 
+            This command is enabled if testing of a lot is not in progress.
+            This command changes the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState"/> property value to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Configuring"/> while the login dialog box is displayed.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.Exit">
+            <summary>
+            Exits the operator interface application. Invoking this command causes TestStand to initiate the shutdown process.
+            The operator interface exits when it receives the ShutDownCompleted event from the Application Manager control.
+            This command is enabled if testing of a lot is not in progress.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.ViewMidLotSummary">
+            <summary>
+            Generates a lot summary report for the tested parts in the lot and creates a window that displays the report.
+            If the window already exists, this command activates it and brings it to the front.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.ViewReport">
+            <summary>
+            Creates a window that displays the reports for the current lot.
+            If the window already exists, this command activates it and brings it to the front.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.ConfigureStation">
+            <summary>
+            Launches the Configure Station Settings dialog box. 
+            This command is enabled if testing of a lot is not in progress. The <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ICommand.Execute"/> method for this command does not return until the dialog box closes.
+            This command changes the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState"/> property value to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Configuring"/> while the dialog box is displayed.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.ConfigureLot">
+            <summary>
+            Launches the Configure Lot Settings dialog box. 
+            This command is enabled if testing of a lot is not in progress. The <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ICommand.Execute"/> method for this command does not return until the dialog box closes.
+            This command changes the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState"/> property value to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Configuring"/> while the dialog box is displayed.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.OpenSTSMaintenanceSoftware">
+            <summary>
+            Opens the STS Maintenance Software 17.1 or later. 
+            If the STS Maintenance Software is already running, this command brings the application to the front.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.ICommandEvents">
+            <summary>
+            Internal interface for TSM. Do not use this interface.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.ICommand">
+            <summary>
+            Defines a command or action that an operator interface performs, usually in response to a user clicking a button.
+            Call <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetCommand(NationalInstruments.TestStand.SemiconductorModule.CommandType)"/> to obtain a reference to a command.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ICommand.Enabled">
+            <summary>
+            Determines whether the command is enabled. Call the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ICommand.Execute"/> method only when the value of this property is true.
+            The <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ICommand.Execute"/> method does nothing if this property value is false.
+            Use this property in an operator interface to determine whether the button associated with the command is enabled.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ICommand.Text">
+            <summary>
+            Returns the text to display for the label of the command. Use this property in an operator interface to determine the text to display for the button associated with the command.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ICommand.Execute">
+            <summary>
+            Invokes the command. Call this method in an operator interface when the button associated with the command is clicked.
+            This method does nothing if the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ICommand.Enabled"/> property value is false.
+            If an error occurs as the result of calling this method, the method raises the <see cref="E:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ErrorOccurred"/> event.
+            </summary>
+        </member>
+        <member name="E:NationalInstruments.TestStand.SemiconductorModule.ICommand.EnabledChanged">
+            <summary>
+            Raised when the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ICommand.Enabled"/> property value changes.
+            Handle this event in an operator interface to update the enabled state of the button associated with the command.
+            </summary>
+        </member>
+        <member name="E:NationalInstruments.TestStand.SemiconductorModule.ICommand.TextChanged">
+            <summary>
+            Raised when the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ICommand.Text"/> property value changes.
+            Handle this event in an operator interface to update the text displayed for the command.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ICommand.TooltipText">
+            <summary>
+            Returns the text to display for the tooltip of the command. Use this property in an operator interface to determine the text to display as the tooltip associated with the command.
+            </summary>
+        </member>
+        <member name="E:NationalInstruments.TestStand.SemiconductorModule.ICommand.TooltipTextChanged">
+            <summary>
+            Raised when the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ICommand.TooltipText"/> property value changes.
+            Handle this event in an operator interface to update the text displayed for the command.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.Command">
+            <summary>
+            Internal class for TSM. Do not use this class.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.IObserverEvents">
+            <summary>
+            Internal interface for TSM. Do not use this interface.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.IObserver">
+            <summary>
+            This interface provides a mechanism by which the operator interface monitors events that occur during testing so that it can update the display.
+            </summary>
+        </member>
+        <member name="E:NationalInstruments.TestStand.SemiconductorModule.IObserver.TestingStateChanged">
+            <summary>
+            Raised when the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState"/> property value changes.
+            </summary>
+        </member>
+        <member name="E:NationalInstruments.TestStand.SemiconductorModule.IObserver.TesterStatusChanged">
+            <summary>
+            Raised when the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TesterStatus"/> property value changes.
+            </summary>
+        </member>
+        <member name="E:NationalInstruments.TestStand.SemiconductorModule.IObserver.StationSettingsChanged">
+            <summary>
+            Raised when any of the property values in <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.StationSettings"/> property change.
+            </summary>
+        </member>
+        <member name="E:NationalInstruments.TestStand.SemiconductorModule.IObserver.LotSettingsChanged">
+            <summary>
+            Raised when any of the property values in <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.LotSettings"/> property change.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.Observer">
+            <summary>
+            Internal class for TSM. Do not use this class.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.ErrorOccurredEventHandler">
+            <summary>
+            Represents the method to handle the <see cref="E:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ErrorOccurred"/> event.
+            </summary>
+            <param name="eventArguments">Provides data for the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManagerEvents.ErrorOccurred(NationalInstruments.TestStand.SemiconductorModule.IErrorOccurredEventArguments)"/> event.</param>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.CustomInstrumentPanelsInstrumentSessionsAvailabilityChangedEventHandler">
+            <summary>
+            Represents the method to handle the <see cref="E:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.CustomInstrumentPanelsInstrumentSessionsAvailabilityChanged"/> event.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.ShuttingDownEventHandler">
+            <summary>
+            Represents the method to handle the <see cref="E:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ShuttingDown"/> event.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.IErrorOccurredEventArguments">
+            <summary>
+            Provides data for the <see cref="E:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ErrorOccurred"/> event.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IErrorOccurredEventArguments.ErrorMessage">
+            <summary>
+            The error message formatted for display in an error dialog box.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IErrorOccurredEventArguments.PerformDefaultErrorHandling">
+            <summary>
+            Determines whether the SemiconductorModuleManager performs default error handling. 
+            Default error handling includes displaying an error dialog box and logging a message to a file the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ErrorLogFilePath"/> property specifies.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManagerEvents">
+            <summary>
+            Internal interface for TSM. Do not use this interface.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerBase">
+            <summary>
+            Internal class for TSM. Do not use this class.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager">
+            <summary>
+            Manages the state and execution for TestStand Semiconductor Module operator interfaces.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetHandlerDriverSequenceFilePaths(System.String[]@)">
+            <summary>
+            Returns an array of handler and prober driver sequence files located in the HandlersAndProbers directory.
+            </summary>
+            <param name="displayNames">An array of display names for the handler and prober driver sequence files. The display names are the base names of the sequence files.</param>
+            <returns>An array of sequence file paths for the available handler and prober drivers.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetInlineQAAlgorithmSequenceFilePaths(System.String[]@)">
+            <summary>
+            Returns an array of inline QA algorithm sequence files located in the InlineQA directory.
+            </summary>
+            <param name="displayNames">An array of display names for the inline QA algorithms. The display names are the base names of the sequence files.</param>
+            <returns>An array of sequence file paths for the available inline QA algorithms.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetTestProgramSequenceFilePaths(System.String[]@)">
+            <summary>
+            Returns an array of test program sequence files located in the test program directory.
+            The TestProgramDirectory station setting specifies the test program directory.
+            </summary>
+            <param name="displayNames">An array of display names for the test program sequence files. The display names are the base names of the sequence files.</param>
+            <returns>An array of sequence file paths for the available test programs.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetTestProgramConfigurationNames(System.String)">
+            <summary>
+            Returns an array of test program configuration names for the test program the <paramref name="testProgramPath"/> parameter specifies.
+            </summary>
+            <param name="testProgramPath">The absolute path of the test program for which to obtain test program configuration names.</param>
+            <returns>An array of test program configuration names.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetHandlerDriverSequenceFilePath(NationalInstruments.TestStand.SemiconductorModule.HandlerMode,System.String)">
+            <summary>
+            Returns the handler or prober driver sequence file path based on the <paramref name="handlerMode"/> parameter.  
+            </summary>
+            <param name="handlerMode">
+            The current handler/prober driver mode.
+            If the mode is <see cref="F:NationalInstruments.TestStand.SemiconductorModule.HandlerMode.Simulated"/>, this method returns the path of the simulated handler driver sequence file.
+            If the mode is <see cref="F:NationalInstruments.TestStand.SemiconductorModule.HandlerMode.Custom"/>, this method returns the sequence file path the <paramref name="handlerOrProberDriverSequenceFilePath"/> parameter specifies.
+            If the mode is <see cref="F:NationalInstruments.TestStand.SemiconductorModule.HandlerMode.None"/>, this method returns an empty string.
+            </param>
+            <param name="handlerOrProberDriverSequenceFilePath">The path to the custom handler or prober driver sequence file.</param>
+            <returns>The path to the handler or prober driver for the corresponding <paramref name="handlerMode"/>.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ConfigureHandlerDriver(System.String,System.Int32)">
+            <summary>
+            Launches the configure handler/prober driver dialog box by executing the Configure sequence of the handler or prober driver sequence file the <paramref name="handlerOrProberDriverSequenceFilePath"/> parameter specifies.
+            </summary>
+            <param name="handlerOrProberDriverSequenceFilePath">The absolute path of the handler or prober driver sequence file.</param>
+            <param name="testStandModalID">The modalID received from the TestStand Engine.NotifyStartOfModalDialog method for the dialog box that invokes this method. If this method is not invoked from a dialog box, pass 0 for this parameter.</param>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.CanConfigureHandlerDriver(System.String)">
+            <summary>
+            Returns true if you can configure the handler or prober.
+            You can configure the handler or prober if the Configure sequence exists in the handler or prober driver sequence file.
+            </summary>
+            <param name="handlerOrProberDriverPath">The absolute path of the handler or prober driver sequence file.</param>
+            <returns>True if you can configure the handler or prober driver.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ReadStationSettings">
+            <summary>
+            Returns a property object that contains the most recently saved station settings.
+            The station settings this method returns might differ from the value of the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.StationSettings"/> property.
+            Use this method while editing, and use the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.StationSettings"/> property at run time to obtain the current station settings.
+            </summary>
+            <returns>The property object for the most recently saved station settings.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ReadLotSettings">
+            <summary>
+            Returns a property object that contains the most recently saved lot settings.
+            The lot settings this method returns might differ from the value of the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.LotSettings"/> property.
+            Use this method while editing, and use the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.LotSettings"/> property at run time to obtain the current lot settings.
+            </summary>
+            <returns>The property object for the most recently saved lot settings.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ConfigureLotSettings(System.Int32)">
+            <summary>
+            Launches the Configure Lot Settings dialog box by executing the ConfigureLotSettings sequence in SemiconductorModuleCallbacks.seq.
+            </summary>
+            <param name="testStandModalID">The modalID received from the TestStand Engine.NotifyStartOfModalDialog method for the dialog box that invokes this method.
+             If this method is not invoked from a dialog box, pass 0 for this parameter.</param>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ConfigureStationSettings(System.Int32)">
+            <summary>
+            Launches the Configure Station Settings dialog box by executing the ConfigureStationSettings sequence in SemiconductorModuleCallbacks.seq.
+            </summary>
+            <param name="testStandModalID">The modalID received from the TestStand Engine.NotifyStartOfModalDialog method for the dialog box that invokes this method.
+             If this method is not invoked from a dialog box, pass 0 for this parameter.</param>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetActualSiteCount(System.String,System.String)">
+            <summary>
+            Returns the number of sites the SemiconductorModuleManager uses to execute the specified test program and configuration.
+            The number of sites is equal to the minimum of the the number of test sockets configured for the TestStand model and the number of sites the pin map specifies.
+            Use the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.NumberOfSites"/> property to obtain the number of sites for the current lot.
+            Use the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetNumberOfSitesInTestProgramPinMap(System.String,System.String)"/> method to obtain the number of sites in the pin map associated with a test program and configuration.
+            </summary>
+            <param name="testProgramPath">The absolute path to the test program sequence file.</param>
+            <param name="configurationName">The name of the test program configuration.</param>
+            <returns>The number of sites the SemiconductorModuleManager uses to execute the specified test program and configuration.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ValidateTestProgram(System.String,System.String,System.String@)">
+            <summary>
+            Confirms that the test program and configuration is valid.
+            </summary>
+            <param name="testProgramPath">The absolute path to the test program sequence file.</param>
+            <param name="configurationName">The name of the test program configuration.</param>
+            <param name="errorMessage">The error message if the test program is invalid.</param>
+            <returns>True if the test program is valid.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestConditionExists(System.String,System.String)">
+            <summary>
+            Returns true if the test condition exists in the test program the <paramref name="testProgramPath"/> parameter specifies or false if the test condition does not exist in the test program or if the test program is invalid.
+            </summary>
+            <param name="testProgramPath">The absolute path to the test program sequence file.</param>
+            <param name="testConditionName">The name of the test condition to check.</param>
+            <returns>True if the test condition exists in the test program the <paramref name="testProgramPath"/> parameter specifies or false if the test condition does not exist in the test program or if the test program is invalid.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetTestConditionValueBoolean(System.String,System.String,System.String)">
+            <summary>
+            Returns the value of a Boolean test condition from a test program for the configuration the <paramref name="configurationName"/> parameter specifies.
+            </summary>
+            <param name="testProgramPath">The absolute path to the test program sequence file.</param>
+            <param name="configurationName">The name of the configuration from which to obtain the test condition value.</param>
+            <param name="testConditionName">The name of the test condition for which to obtain the value.</param>
+            <returns>The value of the test condition.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetTestConditionValueNumber(System.String,System.String,System.String)">
+            <summary>
+            Returns the value of a number test condition from a test program for the configuration the <paramref name="configurationName"/> parameter specifies.
+            </summary>
+            <param name="testProgramPath">The absolute path to the test program sequence file.</param>
+            <param name="configurationName">The name of the configuration from which to obtain the test condition value.</param>
+            <param name="testConditionName">The name of the test condition for which to obtain the value.</param>
+            <returns>The value of the test condition.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetTestConditionValueString(System.String,System.String,System.String)">
+            <summary>
+            Returns the value of a string test condition from a test program for the configuration the <paramref name="configurationName"/> parameter specifies.
+            </summary>
+            <param name="testProgramPath">The absolute path to the test program sequence file.</param>
+            <param name="configurationName">The name of the configuration from which to obtain the test condition value.</param>
+            <param name="testConditionName">The name of the test condition for which to obtain the value.</param>
+            <returns>The value of the test condition.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetCommand(NationalInstruments.TestStand.SemiconductorModule.CommandType)">
+            <summary>
+            Returns an instance of an <see cref="T:NationalInstruments.TestStand.SemiconductorModule.ICommand"/> for the specified <paramref name="commandType"/>. 
+            Use this in the operator interface to associate a command with a specific button or other control.
+            </summary>
+            <param name="commandType">The type of command to obtain.</param>
+            <returns>A command of type <paramref name="commandType"/> that you can associate with a button or other control in the operator interface.</returns>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState">
+            <summary>
+            Returns whether the lot is currently configuring, testing, paused, or idle. 
+            Use the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.CreateObserver"/> method to create an <see cref="T:NationalInstruments.TestStand.SemiconductorModule.IObserver"/> object to monitor when this property changes.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TesterStatus">
+            <summary>
+            Returns a string that describes the current tester state. 
+            Use the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.CreateObserver"/> method to create an <see cref="T:NationalInstruments.TestStand.SemiconductorModule.IObserver"/> object to monitor when this property changes.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.LotSettings">
+            <summary>
+            Returns the current lot settings. 
+            This property is null if the lot has not yet been configured.
+            If testing is complete, this property contains the lot settings used for testing the lot.
+            The operator interface can use the <see cref="E:NationalInstruments.TestStand.SemiconductorModule.IObserver.LotSettingsChanged"/> event to determine when this property changes.
+            The lot settings this property returns might differ from the value of the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ReadLotSettings"/> method.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.StationSettings">
+            <summary>
+            Returns the current station settings. 
+            This property is null only if an error occurred reading the station settings file.
+            The operator interface can use the <see cref="E:NationalInstruments.TestStand.SemiconductorModule.IObserver.StationSettingsChanged"/> event to determine when this property changes.
+            The station settings this property returns might differ from the value of the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ReadStationSettings"/> method.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.CreateObserver">
+            <summary>
+            Returns a new instance of an <see cref="T:NationalInstruments.TestStand.SemiconductorModule.IObserver"/>. 
+            Use this object in the operator interface to handle events that occur while testing and to update control values when an event occurs.
+            </summary>
+            <returns>An instance of an <see cref="T:NationalInstruments.TestStand.SemiconductorModule.IObserver"/> you can use to listen to events.</returns>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.NumberOfSites">
+            <summary>
+            Returns the number of sites used for testing the current lot. 
+            If the lot has not yet been configured, this property returns the number of test sockets process model setting.
+            If testing is complete, this property returns the number of sites tested for the last lot.
+            The value of this property might change at the start of execution but stays fixed during execution.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetSiteLotStatistics">
+            <summary>
+            Returns the lot statistics objects for each site.
+            Each object in the array contains the statistics for a single site.
+            Use site numbers to index into this array to obtain an instance of <see cref="T:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics"/> for each site.
+            The number of elements in the array equals the value of the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.NumberOfSites"/> property.
+            If the lot has not yet been configured, the statistics objects contain empty data (no bin data, and part counts are 0).
+            When you configure the lot, the SemiconductorModuleManager creates new statistics objects that contain valid bin numbers, but all part counts are set to 0.
+            The statistics objects remain valid during testing and after testing is complete until you configure a new lot.
+            </summary>
+            <returns>The lot statistics objects for each site. Use site numbers to index into this array to obtain an instance of <see cref="T:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics"/> for each site. If the lot has not yet been configured, these statistics objects are empty (no bin data, and part counts are 0). Once the lot is configured, the statistics contain valid bin numbers, but all part counts are set to 0. The statistics objects remain valid during testing and after testing is complete.</returns>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.AllSiteLotStatistics">
+            <summary>
+            Returns the lot statistics object for all sites. 
+            This object contains the combined statistics of all sites.
+            Use this object in an operator interface to display overall lot statistics.
+            If the lot has not yet been configured, the statistics object contains empty data (no bin data, and part counts are 0).
+            When you configure the lot, the SemiconductorModuleManager creates a new statistics object that contains valid bin numbers, but all part counts are set to 0.
+            The statistics object remains valid during testing and after testing is complete until you configure a new lot.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetSitesTesting">
+            <summary>
+            Returns an array of size <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.NumberOfSites"/> that indicates which of the sites are currently testing a part or waiting for a part. 
+            The SemiconductorModuleManager updates the values in the array after receiving the start-of-test (SOT) signal and before sending the end-of-test (EOT) signal.
+            The SemiconductorModuleManager does not raise an event to indicate when the testing state of a site changes. An operator interface can poll this information by calling this method in a timer.
+            </summary>
+            <returns>An array of size <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.NumberOfSites"/> that indicates which of the sites are currently testing a part or waiting for a part. An array element value of true for an index indicates that the site with that index is testing a part. False indicates that the site is waiting for a part.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetSettingsToDisplay(System.String[]@,System.String[]@)">
+            <summary>
+            Returns arrays of lot settings and station settings to display in the operator interface settings table. 
+            Call this method when the operator interface starts and when handling the <see cref="E:NationalInstruments.TestStand.SemiconductorModule.IObserver.LotSettingsChanged"/> and <see cref="E:NationalInstruments.TestStand.SemiconductorModule.IObserver.StationSettingsChanged"/> events.
+            The SemiconductorModuleManager obtains the list of settings to display by reading the OISettingsTable.cfg file and evaluating the expressions in that file using the current <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.LotSettings"/> and <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.StationSettings"/> properties.
+            </summary>
+            <param name="displayNames">An array that contains the names of the lot settings configured to be displayed.</param>
+            <param name="displayValues">An array that contains the values of the lot settings configured to be displayed.</param>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestProgramSequenceFile">
+            <summary>
+            Returns the current test program sequence file. 
+            This property is null if the lot is not configured. Use the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.CreateObserver"/> method to create an <see cref="T:NationalInstruments.TestStand.SemiconductorModule.IObserver"/> object to monitor when this property changes.
+            </summary>
+        </member>
+        <member name="E:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ErrorOccurred">
+            <summary>
+            Raised when a run-time error occurs while testing or when the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ICommand.Execute"/> method encounters an error. An operator interface can handle this event to provide a custom error dialog box.
+            Operator interfaces raise this event for code module run-time errors only if the TestStand On Run-Time Error option is set to Show Dialog Box.
+            </summary>
+        </member>
+        <member name="E:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.CustomInstrumentPanelsInstrumentSessionsAvailabilityChanged">
+            <summary>
+            Raised when all executions are at a breakpoint or if an execution resumes when all executions are at a breakpoint. Used for notifying when the instrument sessions availability for custom instrument panels has changed.
+            </summary>
+        </member>
+        <member name="E:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ShuttingDown">
+            <summary>
+            Raised when TSM is shutting down (i.e disabled or TestStand shuts down).
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ErrorLogFilePath">
+            <summary>
+            The path of the file in which to log errors.
+            The default value for this path is &lt;TestStandPublic&gt;\\ErrorLogs\\NI_SemiconductorModule\\OperatorInterfaceErrors.log.
+            Operator interfaces use this property only if the TestStand On Run-Time Error option is set to Show Dialog Box.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ProductVersion">
+            <summary>
+            Returns the full version of the TSM product as a string.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.RuntimeProductVersion">
+            <summary>
+            Returns the full version of the NI TestStand Semiconductor Module Runtime product as a string.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.StartLot">
+            <summary>
+            Starts testing a new lot of parts. 
+            Calling this method changes the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState"/> property value to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Testing"/> before the method completes.
+            Call this method only if <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.IsReadyToTest"/> returns true.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.PauseLot">
+            <summary>
+            Pauses testing of the lot. 
+            The method does not wait for testing to pause before returning.
+            After you call this method, the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState"/> property value changes to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Paused"/>.
+            Call this method only if the TestingState property value is <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Testing"/>.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ResumeLot">
+            <summary>
+            Resumes testing of the lot when paused.
+            The method does not wait for testing to resume before returning. 
+            After you call this method, the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState"/> property value changes to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Testing"/>.
+            Call this method only if TestingState is <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Paused"/>.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.EndLot">
+            <summary>
+            Ends testing of the lot. 
+            The method does not wait for testing to end before returning.
+            After you call this method, the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState"/> property value changes to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Idle"/>.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.PerformSinglePartTest">
+            <summary>
+            Tests a single part on each site and then pauses testing. 
+            Calling this method results in <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState"/> changing to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Testing"/> while each site tests its part then <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Paused"/>, but the TestingState does not necessarily change before the method completes.
+            Call this method only if the TestingState is Paused or <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.IsReadyToTest"/> returns true.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GenerateLotSummaryReport">
+            <summary>
+            Generates a lot summary report and returns it as a string. 
+            If you call this method while the lot is still testing, the method returns the lot summary information for the parts tested thus far.
+            </summary>
+            <returns>A string that contains the lot summary report to write to a file or display in a user interface.</returns>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.IsReadyToTest">
+            <summary>
+            Returns true if the lot is configured (or <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ConfigureLotWhenStartingLot"/> is true), the lot is ready to start testing, and the STS Maintenance Software is not running any operations on the tester. Once the lot has started testing, this property returns false.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.IsEndingLot">
+            <summary>
+            Returns true if you call the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.EndLot"/> method or if the <see cref="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.EndLot"/> command executed but the lot has not yet ended.
+            Once the lot ends, this property returns false.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.IsPausingLot">
+            <summary>
+            Returns true if you call the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.PauseLot"/> method or if the <see cref="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.PauseLot"/> command executed but the lot has not yet paused.
+            Once the lot pauses, this property returns false.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.IsPerformingSinglePartTest">
+            <summary>
+            Returns true if you call the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.PerformSinglePartTest"/> method or if the <see cref="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.PerformSinglePartTest"/> command executed but the lot has not yet paused.
+            Once the lot pauses, this property returns false.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.IsLotComplete">
+            <summary>
+            Returns true when a lot completes testing. You can complete testing by calling the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.EndLot"/> method, by executing the <see cref="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.EndLot"/> command, or by testing all parts the handler or prober provides.
+            After you configure a new lot, this property returns false.
+            Lot statistics objects for the completed lot are available while this is property is true.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.IsPerformingSinglePartRetest">
+            <summary>
+            Returns true if you call the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.PerformSinglePartRetest"/> method or if the <see cref="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.PerformSinglePartRetest"/> command executed but the lot has not yet paused.
+            Once the lot pauses, this property returns false.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.PerformSinglePartRetest">
+            <summary>
+            Retests a single part on each site and then pauses testing. 
+            Calling this method results in <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.TestingState"/> changing to <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Testing"/> while each site tests its part then <see cref="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Paused"/>, but the TestingState does not necessarily change before the method completes.
+            Call this method only if the TestingState is Paused.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ProductName">
+            <summary>
+            Returns the full name of the TSM product, but does not include version.
+            Use <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ProductVersion"/> to get the product version.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.PinMapPath">
+            <summary>
+            Returns the absolute path of the pin map for the current test program.
+            If the lot has not yet been configured, this property returns null.
+            If testing is complete, this property returns the path of the pin map that was used for the last lot.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.BinDefinitionsFilePath">
+            <summary>
+            Returns the absolute path of the bin definitions file for the current test program.
+            If the lot has not yet been configured, this property returns null.
+            If testing is complete, this property returns the path of the bin definitions file that was used for the last lot.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetSpecificationsFilePaths">
+            <summary>
+            Returns the absolute paths of the specifications files for the current test program.
+            If the lot has not yet been configured, this property returns null.
+            If testing is complete, this property returns the paths of the specifications files that were used for the last lot.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.BatchRuntimeData">
+            <summary>
+            Returns an object that contains run-time data associated with the current batch of parts being tested.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetSiteRuntimeData">
+            <summary>
+            Returns the run-time data objects for each site.
+            Each object in the array contains the run-time data for a single site.
+            Use site numbers to index into this array to obtain an instance of <see cref="T:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData"/> for each site.
+            The number of elements in the array equals the value of the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.NumberOfSites"/> property.
+            </summary>
+            <returns>The run-time data objects for each site. Use site numbers to index into this array to obtain an instance of <see cref="T:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData"/> for each site.
+             </returns>
+            <returns>An object that contains run-time data for the specified site.</returns>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.HandlerProberDriverData">
+            <summary>
+            Returns a TestStand property object that contains the custom data stored by the current handler/prober driver.
+            Use this property in special situations in which a custom handler/prober driver needs to communicate to the OI, model plug-in or other application.
+            This property value is valid in the Model Plugin - Begin entry point and beyond.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetWaferSiteLotStatistics">
+            <summary>
+            Returns the lot statistics objects for each site for the current wafer.
+            Each object in the array contains the wafer statistics for a single site.
+            Use site numbers to index into this array to obtain an instance of <see cref="T:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics"/> for each site.
+            The number of elements in the array equals the value of the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.NumberOfSites"/> property.
+            If the lot has not yet been configured, the statistics objects contain empty data (no bin data, and part counts are 0).
+            When you begin a new wafer, the SemiconductorModuleManager creates new statistics objects that contain valid bin numbers, but all part counts are set to 0.
+            The statistics objects remain valid during testing and after testing is complete until you begin testing of a new wafer or configure a new lot.
+            </summary>
+            <returns>The lot statistics objects for each site. Use site numbers to index into this array to obtain an instance of <see cref="T:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics"/> for each site. If the lot has not yet been configured, these statistics objects are empty (no bin data, and part counts are 0). Once the lot is configured, the statistics contain valid bin numbers, but all part counts are set to 0. The statistics objects remain valid during testing and after testing is complete.</returns>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.WaferAllSiteLotStatistics">
+            <summary>
+            Returns the lot statistics object for all sites for the current wafer. 
+            This object contains the combined wafer statistics of all sites.
+            Use this object in an operator interface to display overall wafer statistics for the current wafer.
+            If the lot has not yet been configured, the statistics object contains empty data (no bin data, and part counts are 0).
+            When you begin a new wafer, the SemiconductorModuleManager creates a new statistics object that contains valid bin numbers, but all part counts are set to 0.
+            The statistics object remains valid during testing and after testing is complete until you begin testing of a new wafer or configure a new lot.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ConfigureLotWhenStartingLot">
+            <summary>
+            When true, commands that begin execution of a lot will first trigger a call to <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ConfigureLotSettings(System.Int32)"/>.
+            This will also make commands that begin execution become enabled in the same situations that would enable the <see cref="F:NationalInstruments.TestStand.SemiconductorModule.CommandType.ConfigureLot"/> Command.
+            This property defaults to false.
+            The behavior when this property is set to true makes use of the ConfigureLotSettings callback. The behavior of the GetLotSettings callback does not change based on this property's setting.
+            If an error occurs during <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ConfigureLotSettings(System.Int32)"/>, then the lot will not be started.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.CoreModelPluginInitializedSuccessfully">
+            <summary>
+            Returns true if the semiconductor module core model plugin (NI_SemiconductorModule_Core.seq) completed execution of the Model Plugin - Begin entry point
+            without errors. This property returns false if a lot is not testing.
+            Use this property in custom model plug-ins to avoid performing tasks in the event that the core model plugin did not successfully initialize.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.IsTestSocketValidSite(System.Int32)">
+            <summary>
+            Returns true if the test socket specified by <paramref name="testSocketIndex"/> is executing the tests for one of the sites currently being tested.
+            This method returns false if a lot is not testing.
+            This method returns true for a testSocketIndex value of -1, which typically indicates the controller execution.
+            Use this method in the Model Plugin - Begin entry point of custom model plug-ins to avoid performing tasks in test sockets that are not being used for testing.
+            </summary>
+            <param name="testSocketIndex">The test socket index to check. Use the RunState.TestSockets.MyIndex TestStand property to determine the test socket index of the current execution.</param>
+            <returns></returns>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.EndLotOnCodeModuleRuntimeError">
+            <summary>
+            When true, an operator interface ends testing when the test program MainSequence returns a run-time error that originates from sources other than the Semiconductor Module.
+            Operator interfaces always end testing when a run-time error occurs that originates from the Semiconductor Module or that occurs outside of the test program MainSequence.
+            This property does not affect how the Sequence Editor handles run-time errors.
+            Use caution when setting this property to false because continuing testing after a run-time error can result in a cascade of errors if the tester is in a bad state.
+            Operator interfaces use this property only if the TestStand On Run-Time Error option is set to Show Dialog Box.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.DisplayDialogOnCodeModuleRuntimeError">
+            <summary>
+            When true, an operator interface displays a dialog box that describes the error when the test program MainSequence returns a run-time error that originates from sources other than the Semiconductor Module.
+            Operator interfaces always display a dialog box when a run-time error occurs that originates from the Semiconductor Module or that occurs outside of the test program MainSequence.
+            The operator must click a button on the dialog box, which will continue testing or end the lot depending on the value of
+            the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.EndLotOnCodeModuleRuntimeError"/> property.
+            This property does not affect how the Sequence Editor handles run-time errors.
+            This property does not affect logging of errors to the file specified by the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.ErrorLogFilePath"/> property.
+            Operator interfaces use this property only if the TestStand On Run-Time Error option is set to Show Dialog Box.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetSiteNumbers">
+            <summary>
+            Returns the site numbers used for testing the current lot. 
+            If the lot has not yet been configured, this property returns an array of the numbers 0...N-1, where N is the number of test sockets process model setting.
+            If testing is complete, this property returns the site numbers used for the last lot.
+            The value of this property might change at the start of execution but stays fixed during execution.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetSemiconductorModuleContextIfAtBreakpointForAllExecutions">
+            <summary>
+            Returns a SemiconductorModuleContext for the currently paused execution if all of the test program's executions are paused before ProcessCleanup. 
+            If the test program is not at a breakpoint or the current breakpoint is at ProcessCleanup or after, this method returns null instead. 
+            This is intended only for use by custom instrument panels.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.InPerformanceMeasurementSession">
+            <summary>
+            Returns true if the sequence editor is waiting for a performance measurement session to complete.
+            TSM sets this property to true before it launches the operator interface session that measures the performance and sets it to
+            false when the operator interface process exits.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.IsMeasuringPerformance">
+            <summary>
+            Returns true if TSM is measuring the performance of a test program in an operator interface.
+            TSM sets this property to true when it starts measuring the performance of a test program and sets it to false when
+            it completes the measurements.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetTestProgramModelSequenceFilePath(System.String)">
+            <summary>
+            Returns the absolute path of the process model sequence file associated with the specified test program.
+            If the test program Model Option is Use Station Model, this method returns the path of the TestStand Station Model.
+            This method returns an empty path if the test program does not have a model or if the test program is invalid.
+            </summary>
+            <param name="testProgramPath">The absolute path of the test program.</param>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetNumberOfSitesInTestProgramPinMap(System.String,System.String)">
+            <summary>
+            Returns the number of sites in the pin map associated with the specified test program and configuration.
+            This method returns 0 if the test program does not have a pin map or if the test program is invalid.
+            Use the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetActualSiteCount(System.String,System.String)"/> method to determine how many sites the SemiconductorModuleManager uses to execute the specified test program and configuration.
+            </summary>
+            <param name="testProgramPath">The absolute path of the test program.</param>
+            <param name="configurationName">The name of the test program configuration.</param>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetNumberOfSitesToTest">
+            <summary>
+            Returns the number of sites that TestStand uses to execute with the Batch or Parallel process models.
+            This method gets the Number of Test Sockets setting in the model options. 
+            Although TestStand starts executing with the number of sites returned by this method, TSM might reduce the number of sites at run time based on the number
+            of sites in the current pin map and the contents of the AvailableSiteNumbers station setting.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.SetNumberOfSitesToTest(System.Int32)">
+            <summary>
+            Sets the number of sites that TestStand uses to execute with the Batch or Parallel process models.
+            This method sets the Number of Test Sockets setting in the model options. 
+            Although TestStand starts executing with the number of sites you specify with this method, TSM might reduce the number of sites at run time based on the number
+            of sites in the current pin map and the contents of the AvailableSiteNumbers station setting.
+            </summary>
+            <param name="numberOfSites">The number of sites for TestStand to use to execute with the Batch or Parallel process models.</param>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.CurrentStdfLogFilePath">
+            <summary>
+            Returns the absolute file path of the last STDF log generated for the current lot.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetAllStdfLogFilePathsForLot">
+            <summary>
+            Returns the absolute file paths of all STDF logs generated for the current lot.
+            If the Generate One File per Wafer option is enabled, the length of the array is the
+            number of wafers processed in the lot so far. Otherwise, the length of the array is one.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.CurrentLotSummaryReportFilePath">
+            <summary>
+            Returns the absolute file path of the last Lot Summary report generated for the current lot.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetAllLotSummaryReportFilePathsForLot">
+            <summary>
+            Returns the absolute file paths of all Lot Summary reports generated for the current lot.
+            If the Generate One File per Wafer option is enabled, the length of the array is the
+            number of wafers processed in the lot so far. Otherwise, the length of the array is one.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetCurrentDebugTestResultsLogFilePath(System.Int32)">
+            <summary>
+            Returns the absolute file path of the Debug Test Results Log generated for the current lot.
+            </summary>
+            <param name="siteNumber">
+            Debug Test Results Logs are site-specific. Pass the site number for which you want to obtain the log.
+            </param>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.CurrentCSVTestResultsLogFilePath">
+            <summary>
+            Returns the absolute file path of the last CSV Test Results log generated for the current lot.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager.GetAllCSVTestResultsLogFilePathsForLot">
+            <summary>
+            Returns the absolute file paths of all CSV Test Results logs generated for the current lot.
+            If the Generate One File per Wafer option is enabled, the length of the array is the
+            number of wafers processed in the lot so far. Otherwise, the length of the array is one.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.HandlerMode">
+            <summary>
+            The mode used to select which handler or prober to use.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.HandlerMode.None">
+            <summary>
+            Do not use a handler or prober driver.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.HandlerMode.Simulated">
+            <summary>
+            Use the simulated handler driver.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.HandlerMode.Custom">
+            <summary>
+            Use a custom handler or prober driver.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerException">
+            <summary>
+            The exception thrown when an error occurs in the SemiconductorModuleManager.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerException"/> class with the specified error message.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerException.#ctor(System.String,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerException"/> class with the specified error message and error code.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="errorCode">The TestStand error code that corresponds to the reason for the exception.</param>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerException"/> class with a specified error message and a reference to the inner exception that causes this exception.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerException.#ctor(System.String,System.Int32,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerException"/> class with the specified error message, error code, and a reference to the inner exception that causes this exception.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="errorCode">The TestStand error code that corresponds to the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerException.TestStandErrorCode">
+            <summary>
+            The error code that corresponds to the reason for the exception.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo"/> object with the parameter name and additional exception information. (Overrides <see cref="M:System.Exception.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)"/>.)
+            </summary>
+            <param name="info">The object that holds the serialized object data.</param>
+            <param name="context">The contextual information about the source or destination.</param>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManagerFactory">
+            <summary>
+            Internal interface for TSM. Do not use this interface.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManagerFactory.CreateSemiconductorModuleManager(NationalInstruments.TestStand.Interop.API.IEngine,NationalInstruments.TestStand.Interop.UI.ISequenceFileViewMgr)">
+            <summary>
+            Factory to create a new instance of the <see cref="T:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager"/> type.
+            </summary>
+            <param name="engine">The TestStand Engine.</param>
+            <param name="sequenceFileViewMgr">The TestStand SequenceFileViewMgr.</param>
+            <returns>A new instance of the <see cref="T:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager"/> type.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManagerFactory.GetExistingSemiconductorModuleManager(NationalInstruments.TestStand.Interop.API.IEngine)">
+            <summary>
+            Gets the existing instance of the SemiconductorModuleManager./>
+            </summary>
+            <param name="engine">The TestStand Engine.</param>
+            <returns>The existing instance of the SemiconductorModuleManager.</returns>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerFactory">
+            <summary>
+            Factory to create a new instance of the <see cref="T:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager"/> type.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerFactory.#ctor">
+            <summary>
+            Internal constructor. Do not use. Use the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerFactory.NewSemiconductorModuleManager(NationalInstruments.TestStand.Interop.API.IEngine,NationalInstruments.TestStand.Interop.UI.ISequenceFileViewMgr)"/> static method instead.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerFactory.CreateSemiconductorModuleManager(NationalInstruments.TestStand.Interop.API.IEngine,NationalInstruments.TestStand.Interop.UI.ISequenceFileViewMgr)">
+            <summary>
+            Internal method. Do not use. Use the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerFactory.NewSemiconductorModuleManager(NationalInstruments.TestStand.Interop.API.IEngine,NationalInstruments.TestStand.Interop.UI.ISequenceFileViewMgr)"/> static method instead.
+            </summary>
+            <param name="engine">The TestStand Engine.</param>
+            <param name="sequenceFileViewMgr">The TestStand SequenceFileViewMgr.</param>
+            <returns>A new instance of the <see cref="T:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager"/> type.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerFactory.GetExistingSemiconductorModuleManager(NationalInstruments.TestStand.Interop.API.IEngine)">
+            <summary>
+            Internal method. Do not use. Use the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerFactory.GetSemiconductorModuleManager(NationalInstruments.TestStand.Interop.API.IEngine)"/> static method instead.
+            </summary>
+            <param name="engine">The TestStand Engine.</param>
+            <returns>The existing instance of the SemiconductorModuleManager.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerFactory.NewSemiconductorModuleManager(NationalInstruments.TestStand.Interop.API.IEngine,NationalInstruments.TestStand.Interop.UI.ISequenceFileViewMgr)">
+            <summary>
+            Creates a new instance of the <see cref="T:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager"/> type.
+            Use this method in an operator interface to create the SemiconductorModuleManager that you use to control and monitor the tester.
+            </summary>
+            <param name="engine">The TestStand Engine.</param>
+            <param name="sequenceFileViewMgr">The TestStand SequenceFileViewMgr.</param>
+            <returns>A new instance of the <see cref="T:NationalInstruments.TestStand.SemiconductorModule.ISemiconductorModuleManager"/> type.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.SemiconductorModuleManagerFactory.GetSemiconductorModuleManager(NationalInstruments.TestStand.Interop.API.IEngine)">
+            <summary>
+            Gets the existing instance of the SemiconductorModuleManager.
+            Use this method in a model plug-in or other component to get the current SemiconductorModuleManager.
+            The Sequence Editor and Semiconductor Module Operator Interface applications create the SemiconductorModuleManager that
+            you can access by calling this method.
+            </summary>
+            <param name="engine">The TestStand Engine.</param>
+            <returns>The existing instance of the SemiconductorModuleManager.</returns>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData">
+            <summary>
+            Contains run-time data for a specific test site.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.SiteNumber">
+            <summary>
+            Returns the site number that the run-time data is associated with.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.IsTesting">
+            <summary>
+            When called before the end-of-test, returns true if the site is currently testing a part.
+            When called after the end-of-test, returns true if the site tested a part in the most recent batch.
+            This value is false if the handler/prober driver indicated that the test site is not testing parts.
+            When using the Batch process model, this value is valid in the Model Plugin - Pre Batch entry point and later. 
+            When using the Sequential and Parallel process models, this property value is valid in the Model Plugin - Pre UUT entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.StartOfTestTime">
+            <summary>
+            The time that the the site starts testing after the tester sends the start-of-test (SOT) signal to the handler/prober driver.
+            When using the Batch process model, this value is the same for all test sites and is valid in the Model Plugin - Pre Batch entry point and later. 
+            When using the Sequential and Parallel process models, this property value is valid in the Model Plugin - Pre UUT entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.EndOfTestTime">
+            <summary>
+            The time that the site ended testing before the tester sends the end-of-test (EOT) signal to the handler/prober driver.
+            When using the Batch process model, this value is the same for all test sites and is valid in the Model Plugin - Batch Done entry point and later.
+            It is not valid in the Model Plugin - UUT Done entry point.
+            
+            When using the Sequential and Parallel process models, this property value is valid in the Model Plugin - UUT Done entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.WillRetest">
+            <summary>
+            Returns true if the tester will retest the current part on the site because the operator requested a retest.
+            When using the Batch process model, this property value is the same for all test sites and is valid in the Model Plugin - Batch Done entry point and beyond.
+            When using other process models, this property value is valid in the Model Plugin - UUT Done entry point and beyond.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.IsRetesting">
+            <summary>
+            Returns true if the tester is currently retesting the same part on the site because the operator requested a retest.
+            When using the Batch process model, this property value is the same for all test sites and is valid in the Model Plugin - Pre Batch entry point and beyond.
+            When using other process models, this property value is valid in the Model Plugin - Pre UUT entry point and beyond.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.PartId">
+            <summary>
+            Returns the part identifier for the current part being tested on this site.
+            The handler/prober driver sets this property value by setting values in the SitePartIds parameter in the StartOfTest handler driver entry point sequence.
+            If the handler/prober driver does not set this property, the tester sets the value to a unique value if the GenerateUniquePartIds station settings is set to true.
+            
+            This property corresponds to the PART_ID field in the Part Results Record (PRR) in the STDF data log.
+            When using the Batch process model, this property value is valid in the Model Plugin - Pre Batch entry point and later.
+            When using the Sequential process model, this property value is valid in the Model Plugin - Pre UUT entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.PartText">
+             <summary>
+             Returns the part description text for the current part being tested on this site.
+             The handler/prober driver sets this property value by setting values in the SitePartTexts parameter in the StartOfTest handler driver entry point sequence.
+            
+             This property corresponds to the PART_TXT field in the Part Results Record (PRR) in the STDF data log.
+             When using the Batch process model, this property value is valid in the Model Plugin - Pre Batch entry point and later.
+             When using the Sequential process model, this property value is valid in the Model Plugin - Pre UUT entry point and later.
+             </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.DieCoordinateX">
+             <summary>
+             Returns the X wafer coordinate of the current die being tested on this site.
+             The handler/prober driver sets this property value by setting values in the WaferRuntimeData.SiteDieCoordinates parameter in the StartOfTest handler driver entry point sequence.
+            
+             This property corresponds to the X_COORD field in the Part Results Record (PRR) in the STDF data log.
+             When using the Batch process model, this property value is valid in the Model Plugin - Pre Batch entry point and later.
+             When using the Sequential process model, this property value is valid in the Model Plugin - Pre UUT entry point and later.
+             </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.DieCoordinateY">
+            <summary>
+            Returns the Y wafer coordinate of the current die being tested on this site.
+            The handler/prober driver sets this property value by setting values in the WaferRuntimeData.SiteDieCoordinates parameter in the StartOfTest handler driver entry point sequence.
+            This property corresponds to the Y_COORD field in the Part Results Record (PRR) in the STDF data log.
+            When using the Batch process model, this property value is valid in the Model Plugin - Pre Batch entry point and later.
+            When using the Sequential process model, this property value is valid in the Model Plugin - Pre UUT entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.InlineQAEnabled">
+            <summary>
+            Returns true if an InlineQA step executed its block of steps for this site.
+            Use this property to determine whether InlineQA tests were run for last part that was tested on this site.
+            An InlineQA step executes its block of steps when the InlineQA station settings is true and the InlineQA algorithm sequence file selects the current part to run InlineQA tests.
+            
+            This property value is valid in the Model Plugin - UUT Done entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.HardwareBinNumber">
+            <summary>
+            Returns the number of the hardware bin that the tester assigned to the last part that was tested on this site.
+            Returns -1 if the tester has not yet assigned a bin to the part or a value between 0 and 65535 if the bin was assigned.
+            This property value is valid in the Model Plugin - UUT Done entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.HardwareBinName">
+            <summary>
+            Returns the name of the hardware bin that the tester assigned to the last part that was tested on this site.
+            This property value is valid in the Model Plugin - UUT Done entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.SoftwareBinNumber">
+            <summary>
+            Returns the number of the software bin that the tester assigned to the last part that was tested on this site.
+            Returns -1 if the tester has not yet assigned a bin to the part or a value between 0 and 65535 if the bin was assigned.
+            This property value is valid in the Model Plugin - UUT Done entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.SoftwareBinName">
+            <summary>
+            Returns the name of the software bin that the tester assigned to the last part that was tested on this site.
+            This property value is valid in the Model Plugin - UUT Done entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.BinType">
+            <summary>
+            Returns the type of the bin that the tester assigned to the last part that was tested on this site.
+            This property value is valid in the Model Plugin - UUT Done entry point and beyond.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.TestTimeInSeconds">
+            <summary>
+            Returns the time to execute the MainSequence sequence for the last part that was tested on this site.
+            This property value is valid in the Model Plugin - UUT Done entry point and beyond.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.IsDuplicatePartId">
+            <summary>
+            Returns true if a part with the same part ID as the current part was tested previously in the current lot.
+            When using the Batch process model, this property value is valid in the Model Plugin - Pre Batch entry point and later.
+            When using the Sequential process model, this property value is valid in the Model Plugin - Pre UUT entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISiteRuntimeData.IsDuplicateDieCoordinates">
+            <summary>
+            Returns true if a part with the same die coordinates as the current part was tested previously in the current wafer.
+            When using the Batch process model, this property value is valid in the Model Plugin - Pre Batch entry point and later.
+            When using the Sequential process model, this property value is valid in the Model Plugin - Pre UUT entry point and later.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.TestingState">
+            <summary>
+            Indicates the testing state of the tester.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Idle">
+            <summary>
+            The tester is not testing parts, and no operations are currently in progress.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Paused">
+            <summary>
+            The tester is paused between testing parts.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Testing">
+            <summary>
+            The tester is actively testing parts.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.TestingState.Configuring">
+            <summary>
+            The tester is not testing parts, but some configuration is occurring.
+            The Tester is in this state during Login/Logout and when displaying the Configure Station Settings or Configure Lot Settings dialog boxes.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.IWaferRuntimeData">
+            <summary>
+            Contains run-time data for the current wafer being tested.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IWaferRuntimeData.WaferId">
+            <summary>
+            Returns the wafer ID.
+            This property corresponds to the WAFER_ID field in the Wafer Information Record (WIR) and Wafer Results Record (WRR) in the STDF data log.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IWaferRuntimeData.FabWaferId">
+            <summary>
+            Returns the fab wafer ID.
+            This property corresponds to the FABWF_ID field in the Wafer Results Record (WRR) in the STDF data log.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IWaferRuntimeData.FrameId">
+            <summary>
+            Returns the wafer frame ID.
+            This property corresponds to the FRAME_ID field in the Wafer Results Record (WRR) in the STDF data log.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IWaferRuntimeData.MaskId">
+            <summary>
+            Returns the wafer mask ID.
+            This property corresponds to the MASK_ID field in the Wafer Results Record (WRR) in the STDF data log.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IWaferRuntimeData.UserDescription">
+            <summary>
+            Returns the wafer description supplied by user.
+            This property corresponds to the USR_DESC field in the Wafer Results Record (WRR) in the STDF data log.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IWaferRuntimeData.ExecDescription">
+            <summary>
+            Returns the wafer description supplied by exec.
+            This property corresponds to the EXC_DESC field in the Wafer Results Record (WRR) in the STDF data log.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest">
+            <summary>
+            Contains the settings and the results of a PAT test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.TestNumber">
+            <summary>
+            The test number associated with the test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.TestName">
+            <summary>
+            The test name associated with the test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.SoftwareBinNumber">
+            <summary>
+            The software bin number associated with the test. The semiconductor module assigns this bin to the DUT if the test fails.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.IsLogOnly">
+            <summary>
+            Indicates whether the test only logs data value and does not compare the data value to the limits.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.Units">
+            <summary>
+            Indicates the units for the data value and limits.
+            The units are generally base units and do not include a scaling factor prefix such as milli- or nano-.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.ScalingExponent">
+            <summary>
+            Indicates the scaling exponent associated with the data value and limits.
+            The scaling exponent determines how the data value and limits should be scaled when they are displayed. 
+            The scaling exponent also determines the prefix to add to the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.Units"/> string when it is displayed.
+            Valid values are -15, -12, -9, -6, -3, -2, 0, 3, 6, 9, 12. A value of -2 indicates percentage and is used without units.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.NumericFormat">
+            <summary>
+            Indicates the numeric format to use to display the data value and limits.
+            The syntax of the numeric format string is identical to the format string that the C printf function accepts, with the following exceptions: 
+            A $ character after the % character in the format string removes trailing zeros after the decimal point.
+            A format code of %b formats a number in binary.
+            An empty string uses the default numeric format specified by TestStand. (%.13g)
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.DataValue">
+            <summary>
+            The data value associated with the test.
+            This value is not scaled and is assumed to be in base units.
+            The Semiconductor Multi Test step sets the data value to the data value associated from the base test.
+            You can set this value before calling <see cref="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.Evaluate"/> to use a different data value.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.LowLimit">
+            <summary>
+            The low limit to use compare the data value to.
+            This value is not scaled and is assumed to be in base units.
+            You can set this value before calling <see cref="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.Evaluate"/> to use a different low limit.
+            This value is not used if <see cref="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.IsLogOnly"/> is true.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.HighLimit">
+            <summary>
+            The high limit to use compare the data value to.
+            This value is not scaled and is assumed to be in base units.
+            You can set this value before calling <see cref="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.Evaluate"/> to use a different high limit.
+            This value is not used if <see cref="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.IsLogOnly"/> is true.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.Passed">
+            <summary>
+            Indicates whether the test passed the last time it was performed.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.Evaluate">
+            <summary>
+            Evaluates this PAT test by either logging the data value or by comparing the data value to the limits.
+            </summary>
+            <returns>True if the test passed or if <see cref="P:NationalInstruments.TestStand.SemiconductorModule.IPartAverageTestingTest.IsLogOnly"/> is true.</returns>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest">
+            <summary>
+            Contains the settings for a Semiconductor Multi Test NumericLimit test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.TestNumberExpression">
+            <summary>
+            The test number expression associated with the test.
+            If this expression is not empty, the Semiconductor Multi Test step sets the value of the TestNumber property to the result of evaluating this expression.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.TestNumber">
+            <summary>
+            The test number associated with the test.
+            A value of zero indicates that the step does not specify a test number for the test.
+            If the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.TestNumberExpression"/> property is not empty, the Semiconductor Multi Test step sets the TestNumber property to the result of evaluating that expression.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.TestNameExpression">
+            <summary>
+            The test name expression associated with the test.
+            If this expression is not empty, the Semiconductor Multi Test step sets the value of the TestName property to the result of evaluating this expression.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.TestName">
+            <summary>
+            The test name associated with the test.
+            If the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.TestNameExpression"/> property is not empty, the Semiconductor Multi Test step sets the TestName property to the result of evaluating that expression.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.SoftwareBinNumber">
+            <summary>
+            The software bin number associated with the test.
+            The semiconductor module assigns this bin to the DUT if the test fails.
+            If the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.SoftwareBinNumberExpression"/> property is not empty, the Semiconductor Multi Test step sets the SoftwareBinNumber property to the result of evaluating that expression.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.SoftwareBinNumberExpression">
+            <summary>
+            The software bin number expression associated with the test.
+            If this expression is not empty, the Semiconductor Multi Test step sets the value of the SoftwareBinNumber property to the result of evaluating this expression.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.LowLimitExpression">
+            <summary>
+            Indicates the expression to evaluate to determine the low limit.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.HighLimitExpression">
+            <summary>
+            Indicates the expression to evaluate to determine the high limit.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.IsLogOnly">
+            <summary>
+            Indicates whether the test only logs data value and does not compare the data value to the limits.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.Units">
+            <summary>
+            Indicates the units for the data value and limits.
+            The units are generally base units and do not include a scaling factor prefix such as milli- or nano-.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.ScalingExponent">
+            <summary>
+            Indicates the scaling exponent associated with the data value and limits.
+            The scaling exponent determines how the data value and limits should be scaled when they are displayed. 
+            The scaling exponent also determines the prefix to add to the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.Units"/> string when it is displayed.
+            Valid values are -15, -12, -9, -6, -3, -2, 0, 3, 6, 9, 12. A value of -2 indicates percentage and is used without units.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.NumericFormat">
+            <summary>
+            Indicates the numeric format to use to display the data value and limits.
+            The syntax of the numeric format string is identical to the format string that the C printf function accepts, with the following exceptions: 
+            A $ character after the % character in the format string removes trailing zeros after the decimal point.
+            A format code of %b formats a number in binary.
+            An empty string uses the default numeric format specified by TestStand. (%.13g)
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.PartAverageTestingBaseTestNumber">
+            <summary>
+            Indicates a test number that the PAT algorithm can use to compute the test numbers of PAT tests.
+            A PAT algorithm can choose to ignore this property and either use the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.DynamicPartAverageTestingTestNumber"/> and
+            <see cref="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.StaticPartAverageTestingTestNumber"/> properties or use another mechanism for determining PAT test numbers.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.DynamicPartAverageTestingEnabled">
+            <summary>
+            Indicates that dynamic PAT is enabled for the test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.DynamicPartAverageTestingTestNumber">
+            <summary>
+            Indicates the test number to use for the default dynamic PAT test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.DynamicPartAverageTestingTestName">
+            <summary>
+            Indicates the test name to use for the default dynamic PAT test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.DynamicPartAverageTestingSoftwareBinNumber">
+            <summary>
+            Indicates the software bin number to use for the default dynamic PAT test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.DynamicPartAverageTestingLowLimit">
+            <summary>
+            Indicates the low limit to use for the default dynamic PAT test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.DynamicPartAverageTestingHighLimit">
+            <summary>
+            Indicates the high limit to use for the default dynamic PAT test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.StaticPartAverageTestingEnabled">
+            <summary>
+            Indicates that dynamic PAT is enabled for the test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.StaticPartAverageTestingTestNumber">
+            <summary>
+            Indicates the test number to use for the default static PAT test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.StaticPartAverageTestingTestName">
+            <summary>
+            Indicates the test name to use for the default static PAT test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTest.StaticPartAverageTestingSoftwareBinNumber">
+            <summary>
+            Indicates the software bin number to use for the default static PAT test.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTestResult">
+            <summary>
+            The result of a Semiconductor Multi Test step NumericLimit test.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTestResult.TestNumber">
+            <summary>
+            The test number. A value of 0 indicates that the step does not specify a test number.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTestResult.TestName">
+            <summary>
+            The test name.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTestResult.IsLogOnly">
+            <summary>
+            Indicates whether the test only logs data value and does not compare the data value to the limits.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTestResult.Units">
+            <summary>
+            Indicates the units for the data value and limits.
+            The units are generally base units and do not include a scaling factor prefix such as milli- or nano-.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTestResult.ScalingExponent">
+            <summary>
+            Indicates the scaling exponent associated with the data value and limits.
+            The scaling exponent determines how the data value and limits should be scaled when they are displayed. 
+            The scaling exponent also determines the prefix to add to the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTestResult.Units"/> string when it is displayed.
+            Valid values are -15, -12, -9, -6, -3, -2, 0, 3, 6, 9, 12. A value of -2 indicates percentage and is used without units.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTestResult.NumericFormat">
+            <summary>
+            Indicates the numeric format to use to display the data value and limits.
+            The syntax of the numeric format string is identical to the format string that the C printf function accepts, with the following exceptions: 
+            A $ character after the % character in the format string removes trailing zeros after the decimal point.
+            A format code of %b formats a number in binary.
+            An empty string uses the default numeric format specified by TestStand. (%.13g)
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTestResult.Passed">
+            <summary>
+            Indicates whether the test passed. This value is true if <see cref="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTestResult.IsLogOnly"/> is true.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTestResult.DataValue">
+            <summary>
+            Contains the data value for the test.
+            This value is not scaled and is assumed to be in base units.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTestResult.LowLimit">
+            <summary>
+            Indicates the low limit for the test.
+            This value is not scaled and is assumed to be in base units.
+            This property has the value 0 if <see cref="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTestResult.IsLogOnly"/> is true.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTestResult.HighLimit">
+            <summary>
+            Indicates the high limit for the test.
+            This value is not scaled and is assumed to be in base units.
+            This property has the value 0 if <see cref="P:NationalInstruments.TestStand.SemiconductorModule.INumericLimitTestResult.IsLogOnly"/> is true.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.BinType">
+            <summary>
+            The type of a test results bin.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.BinType.Pass">
+            <summary>
+            A bin for parts that pass all tests.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.BinType.Fail">
+            <summary>
+            A bin for parts that failed at least one test.
+            </summary>
+        </member>
+        <member name="F:NationalInstruments.TestStand.SemiconductorModule.BinType.Other">
+            <summary>
+            A bin for parts that should not be categorized as passed or failed, such as parts for which an error occurred during testing.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.IBinStatistics">
+            <summary>
+            Contains the information that describes a bin and the number of parts in the bin.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IBinStatistics.BinNumber">
+            <summary>
+            The number assigned to the bin.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IBinStatistics.BinName">
+            <summary>
+            The name of the bin.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IBinStatistics.BinType">
+            <summary>
+            The type of the bin.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IBinStatistics.PartCount">
+            <summary>
+            The number of parts placed in the bin based on the test result of the part.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.ISoftwareBinStatistics">
+            <summary>
+            Contains the information that describes a software bin and the number of parts in the bin.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISoftwareBinStatistics.BinNumber">
+            <summary>
+            The number assigned to the bin.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISoftwareBinStatistics.BinName">
+            <summary>
+            The name of the bin.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISoftwareBinStatistics.BinType">
+            <summary>
+            The type of the bin.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISoftwareBinStatistics.PartCount">
+            <summary>
+            The number of parts placed in the bin based on the test result of the part.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ISoftwareBinStatistics.HardwareBinNumber">
+            <summary>
+            The hardware bin associated with the software bin.
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.IPartCountStatistics">
+            <summary>
+            Contains the number of parts in each <see cref="T:NationalInstruments.TestStand.SemiconductorModule.BinType"/>.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartCountStatistics.Passed">
+            <summary>
+            The number of parts in a <see cref="F:NationalInstruments.TestStand.SemiconductorModule.BinType.Pass"/> bin.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartCountStatistics.Failed">
+            <summary>
+            The number of parts in a <see cref="F:NationalInstruments.TestStand.SemiconductorModule.BinType.Fail"/> bin.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartCountStatistics.Other">
+            <summary>
+            The number of parts in a <see cref="F:NationalInstruments.TestStand.SemiconductorModule.BinType.Other"/> bin.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartCountStatistics.Total">
+            <summary>
+            The total number of parts in all bins.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.IPartCountStatistics.Retested">
+            <summary>
+            The number of parts retested at least once.
+            If a part is retested on multiple sites, this property is set only for the site that first retested the part.
+            This property is 0 for <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.InlineQAPartCountStatistics"/> and for <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.WindowPartCountStatistics"/>
+            </summary>
+        </member>
+        <member name="T:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics">
+            <summary>
+            Contains statistical information about the lot.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetSoftwareBinStatistics(System.UInt16)">
+            <summary>
+            Returns software bin statistics for the bin number the <paramref name="bin"/> parameter specifies.
+            </summary>
+            <param name="bin">The software bin number.</param>
+            <returns>Software bin statistics for the bin number the <paramref name="bin"/> parameter specifies.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetHardwareBinStatistics(System.UInt16)">
+            <summary>
+            Returns hardware bin statistics for the bin number the <paramref name="bin"/> parameter specifies.
+            </summary>
+            <param name="bin">The hardware bin number.</param>
+            <returns>Hardware bin statistics for the bin number the <paramref name="bin"/> parameter specifies.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetHardwareBinNumbers">
+            <summary>
+            Returns an array that contains the hardware bin numbers sorted by bin number.
+            </summary>
+            <returns>An array that contains the hardware bin numbers sorted by bin number.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetSoftwareBinNumbers">
+            <summary>
+            Returns an array that contains the software bin numbers sorted by bin number.
+            </summary>
+            <returns>An array that contains the software bin numbers sorted by bin number.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetSoftwareBinNumbersByCount">
+            <summary>
+            Returns an array that contains the software bin numbers sorted by highest part count to lowest part count.
+            </summary>
+            <returns>An array that contains the software bin numbers sorted by highest part count to lowest part count.</returns>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.PartCountStatistics">
+            <summary>
+            Contains bin result counts for all parts tested.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.InlineQAPartCountStatistics">
+            <summary>
+            Contains bin result counts for the parts tested with inline QA.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.WindowPartCountStatistics">
+            <summary>
+            Contains the bin results counts for the most recent parts. 
+            The PartCountWindowSize station setting determines how many parts to store and return. You can obtain the current value from the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.PartCountWindowSize"/> property.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetAverageCycleTime">
+            <summary>
+            Returns the average cycle time in milliseconds for the lot.
+            The cycle time includes the time to perform tests (socket time) and the time required to perform other tasks, such as binning, placing DUTs, and generating reports.
+            </summary>
+            <returns>The average cycle time for the lot.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetAverageSocketTime">
+            <summary>
+            Returns the average socket time in milliseconds for the lot.
+            The socket time includes the time it takes to perform test code.
+            </summary>
+            <returns>The average socket time for the lot.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetWindowAverageCycleTime">
+            <summary>
+            Returns the average cycle time in milliseconds for the most recently tested parts.
+            The number of parts included in the average is the value of the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.TimeStatisticsWindowSize"/> property.
+            The cycle time includes the time to perform tests (socket time) and the time required to perform other tasks, such as binning, placing DUTs, and generating reports.
+            </summary>
+            <returns>The average cycle time for the parts in the window.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetWindowAverageSocketTime">
+            <summary>
+            Returns the average socket time in milliseconds for the most recently tested parts.
+            The number of parts included in the average is the value of the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.TimeStatisticsWindowSize"/> property.
+            The socket time includes the time it takes to perform test code.
+            </summary>
+            <returns>The average socket time for the lot.</returns>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.LastCycleTime">
+            <summary>
+            Returns the time of the previous cycle for the lot in milliseconds. 
+            The cycle time includes the time to perform tests (socket time) and the time required to perform other tasks, such as binning, placing DUTs, and generating reports.
+            When using the Batch process model, this property value is valid in the Model Plugin - Pre Batch entry point and later.
+            When using the Sequential process model, this property value is valid in the Model Plugin - Pre UUT entry point and later.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.LastSocketTime">
+            <summary>
+            Returns the time of the current cycle for the lot in milliseconds. 
+            The socket time includes the time it takes to perform test code.
+            When using the Batch process model, this property value is valid in the Model Plugin - Batch Done entry point and later.
+            When using the Sequential process model, this property value is valid in the Model Plugin - UUT Done entry point and later.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetTesterVelocity">
+            <summary>
+            Returns the number of parts tested per hour for the current windowed average cycle time.
+            </summary>
+            <returns>The number of parts tested per hour for the current windowed average cycle time.</returns>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.SiteNumber">
+            <summary>
+            Returns the site number the statistics correspond to or -1 for all sites.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.LotStartTimeString">
+            <summary>
+            Returns a string representation of the lot start time in the format 07/24/2015 09:00:00.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.LotEndTimeString">
+            <summary>
+            Returns a string representation of the lot end time in the format 07/24/2015 09:00:00.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.PartCountWindowSize">
+            <summary>
+            Returns the number of parts included in the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.WindowPartCountStatistics"/>.
+            Use the PartCountWindowSize standard station setting to set this value.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.TimeStatisticsWindowSize">
+            <summary>
+            Returns the number of parts used to compute the values the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetWindowAverageCycleTime"/> and <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetWindowAverageSocketTime"/> methods return.
+            When TimeStatisticsWindowSize returns 0, all tested parts are used to compute the values the <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetWindowAverageCycleTime"/> and <see cref="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetWindowAverageSocketTime"/> methods return.
+            The default value of this property is 10 * N, where N is the number of sites for the current test program.
+            Use the TimeStatisticsWindowSize standard station setting to set this value.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.LotStartTime">
+            <summary>
+            Returns the lot start time. The lot start time corresponds to the time that the handler/prober driver receives the first start-of-test (SOT) signal.
+            </summary>
+        </member>
+        <member name="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.LotEndTime">
+            <summary>
+            Returns the lot end time. The lot end time corresponds to the time that tester completes testing and writing all reports and data log files.
+            This property value is valid in the Model Plugin - End entry point.
+            </summary>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetWindowSoftwareBinStatistics(System.UInt16)">
+            <summary>
+            Returns software bin statistics for the bin number the <paramref name="bin"/> parameter specifies for the most recent parts.
+            The PartCountWindowSize station setting determines how many parts to store and return. You can obtain the current value from the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.PartCountWindowSize"/> property.
+            </summary>
+            <param name="bin">The software bin number.</param>
+            <returns>Software bin statistics for the bin number the <paramref name="bin"/> parameter specifies for the most recent parts.</returns>
+        </member>
+        <member name="M:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.GetWindowHardwareBinStatistics(System.UInt16)">
+            <summary>
+            Returns hardware bin statistics for the bin number the <paramref name="bin"/> parameter specifies for the most recent parts.
+            The PartCountWindowSize station setting determines how many parts to store and return. You can obtain the current value from the <see cref="P:NationalInstruments.TestStand.SemiconductorModule.ILotStatistics.PartCountWindowSize"/> property.
+            </summary>
+            <param name="bin">The hardware bin number.</param>
+            <returns>Hardware bin statistics for the bin number the <paramref name="bin"/> parameter specifies for the most recent parts.</returns>
+        </member>
+    </members>
+</doc>
