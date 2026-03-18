@@ -1,0 +1,873 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:STSOperatorTool"
+		xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+		xmlns:s="clr-namespace:System;assembly=mscorlib"
+		mc:Ignorable="d"
+		Loaded="MainWindow_OnLoaded" d:DataContext="{d:DesignData IViewModel}"
+		x:Class="STSOperatorTool.MainWindow"
+		x:Name="STSOperatorToolWindow"
+		WindowStyle="None"
+		Title="STS_OPERATOR_TOOL_NAME" Height="Auto" Width="1400" MinWidth="800" MinHeight="345"
+		WindowStartupLocation="CenterScreen"
+		SizeChanged="MainWindow_SizeChanged" Closing="MainWindow_OnClosing">
+	<shell:WindowChrome.WindowChrome>
+		<shell:WindowChrome
+			ResizeBorderThickness="6"
+			CaptionHeight="43"
+			CornerRadius="0"
+			GlassFrameThickness="0">
+		</shell:WindowChrome>
+	</shell:WindowChrome.WindowChrome>
+	<Window.Resources>
+		<local:FailureRateToOpacityConverter x:Key="FailureRateToOpacity" />
+		<local:InvertBooleanConverter x:Key="Invert" />
+		<local:PercentageConverter x:Key="Percentage" />
+		<GridLength x:Key="RowHeight">56</GridLength>
+		<s:Double x:Key="MinCardHeight">234</s:Double>
+		<BooleanToVisibilityConverter x:Key="BoolToVis"/>
+		<Style TargetType="TextBlock">
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+		</Style>
+		<Style TargetType="MenuItem">
+			<Setter Property="ToolTipService.InitialShowDelay" Value="1000"/>
+			<Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
+		</Style>
+		<Style TargetType="ToolTip">
+			<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.InfoColor}}" />
+			<Style.Resources>
+				<!-- need to override the "TextBlock" foreground color set earlier -->
+				<Style TargetType="TextBlock">
+					<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InfoTextColor}}"/>
+				</Style>
+			</Style.Resources>
+		</Style>
+	</Window.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<!--provide the background for the entire form.  In practice, this appears as the window's resize border, because the title and window content obscure the rest-->
+		<Border Grid.Row="0" Grid.RowSpan="2" CornerRadius="0" BorderThickness="0.5" BorderBrush="{StaticResource WindowFrameColor}" Background="{StaticResource FrameBackground}" />
+
+		<!--title bar-->
+		<Grid Grid.Row="0" Height="40" Margin="{Binding ElementName=STSOperatorToolWindow, Path=CaptionButtonMargin}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+			<!--Window Icon and Title-->
+			<local:WindowIcon Grid.Column="0" Width="16" Height="16" Margin="16,0,16,0" />
+			<TextBlock Grid.Column="1" Text="{Binding Title, ElementName=STSOperatorToolWindow}" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSizeSmall}" Foreground="{StaticResource TextColor}" VerticalAlignment="Center"/>
+
+			<local:MinimizeButton Grid.Column="2" Content="{StaticResource MinimizeIcon}" Style="{StaticResource CaptionButtonStyle}"/>
+			<local:MaximizeButton Grid.Column="3" Content="{StaticResource Maximize1Icon}" Style="{StaticResource CaptionButtonStyle}" x:Name="Maximize1Button"/>
+			<local:MaximizeButton Grid.Column="3" Content="{StaticResource Maximize2Icon}" Style="{StaticResource CaptionButtonStyle}" x:Name="Maximize2Button" Visibility="Hidden"/>
+			<local:CloseButton Grid.Column="4" Content="{StaticResource CloseIcon}" Style="{StaticResource CaptionButtonStyle}" Command="{Binding ExitCommand}"/>
+		</Grid>
+
+		<Grid Grid.Row="1" Margin="32,0,32,8" Grid.IsSharedSizeScope="True">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+
+			<!-- Menu bar Grid control -->
+			<Grid Grid.Row="0" Grid.IsSharedSizeScope="True" x:Name="MenuBarGrid">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" MinWidth="{Binding Path=DesiredSize.Width, ElementName=UserIcon}"/>
+				</Grid.ColumnDefinitions>
+
+				<Grid Grid.Row="0" Background="{StaticResource FrameBackground}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<Button Grid.Column="0" Style="{StaticResource Menu}" x:Name="HamburgerButton" HorizontalAlignment="Left" VerticalAlignment="Top" Height="70" Width="70"
+					ContextMenuService.Placement="Bottom" local:ContextMenuLeftClickBehavior.IsLeftClickEnabled="True">
+						<Button.ContextMenu>
+							<ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" FontSize="{StaticResource ContentFontSize}" FontFamily="{StaticResource ContentFont}">
+								<MenuItem x:Name="ConfigureLotMenuItem" Header="{Binding ConfigureLotCommand.SemiconductorModuleCommandText}" Command="{Binding ConfigureLotCommand}" Margin="0,16,0,11"
+										UsesItemContainerTemplate="{Binding LotConfigured, Converter={StaticResource Invert}}">
+									<ToolTipService.ToolTip>
+										<TextBlock Text="{Binding ConfigureLotCommand.SemiconductorModuleCommandToolTipText}" />
+									</ToolTipService.ToolTip>
+								</MenuItem>
+								<MenuItem Header="{Binding ConfigureStationCommand.SemiconductorModuleCommandText}" Command="{Binding ConfigureStationCommand}" Margin="0,0,0,11">
+									<ToolTipService.ToolTip>
+										<TextBlock Text="{Binding ConfigureStationCommand.SemiconductorModuleCommandToolTipText}"/>
+									</ToolTipService.ToolTip>
+								</MenuItem>
+								<Separator Margin="0,0,0,8"/>
+								<MenuItem Header="{Binding ViewMidLotSummaryCommand.SemiconductorModuleCommandText}" Command="{Binding ViewMidLotSummaryCommand}" Margin="0,0,0,11">
+									<ToolTipService.ToolTip>
+										<TextBlock Text="{Binding ViewMidLotSummaryCommand.SemiconductorModuleCommandToolTipText}"/>
+									</ToolTipService.ToolTip>
+								</MenuItem>
+								<MenuItem Header="{Binding ViewReportCommand.SemiconductorModuleCommandText}" Command="{Binding ViewReportCommand}" Margin="0,0,0,11">
+									<ToolTipService.ToolTip>
+										<TextBlock Text="{Binding ViewReportCommand.SemiconductorModuleCommandToolTipText}"/>
+									</ToolTipService.ToolTip>
+								</MenuItem>
+								<Separator Margin="0,0,0,8"/>
+								<MenuItem Header="{Binding OpenSTSMaintenanceSoftwareCommand.SemiconductorModuleCommandText}" Command="{Binding OpenSTSMaintenanceSoftwareCommand}" Margin="0,0,0,16">
+									<ToolTipService.ToolTip>
+										<TextBlock Text="{Binding OpenSTSMaintenanceSoftwareCommand.SemiconductorModuleCommandToolTipText}"/>
+									</ToolTipService.ToolTip>
+								</MenuItem>
+							</ContextMenu>
+						</Button.ContextMenu>
+					</Button>
+					<Button Grid.Column="2" Style="{StaticResource RunOnce}" x:Name="RunOnce" HorizontalAlignment="Left" VerticalAlignment="Top"
+							Width="70" Height="70" Margin="20,0,0,0" Command="{Binding RunOnceCommand}">
+						<ToolTipService.ToolTip>
+							<TextBlock Text="{Binding RunOnceCommand.SemiconductorModuleCommandToolTipText}"/>
+						</ToolTipService.ToolTip>
+					</Button>
+					<Button Grid.Column="3" Style="{StaticResource StartResumeLot}" x:Name="StartLot" HorizontalAlignment="Left" VerticalAlignment="Top"
+							Width="70" Height="70" Margin="0,0" Command="{Binding StartResumeLotCommand}">
+						<ToolTipService.ToolTip>
+							<TextBlock Text="{Binding StartResumeLotCommand.SemiconductorModuleCommandToolTipText}"/>
+						</ToolTipService.ToolTip>
+					</Button>
+					<Button Grid.Column="4" Style="{StaticResource PauseLot}" x:Name="PauseResumeLot" HorizontalAlignment="Left" VerticalAlignment="Top"
+							Width="70" Height="70" Margin="0,0" Command="{Binding PauseLotCommand}">
+						<ToolTipService.ToolTip>
+							<TextBlock Text="{Binding PauseLotCommand.SemiconductorModuleCommandToolTipText}"/>
+						</ToolTipService.ToolTip>
+					</Button>
+					<Button Grid.Column="5" Style="{StaticResource EndLot}" x:Name="EndLot" HorizontalAlignment="Left" VerticalAlignment="Top" 
+							Width="70" Height="70" Margin="0,0" Command="{Binding EndLotCommand}">
+						<ToolTipService.ToolTip>
+							<TextBlock Text="{Binding EndLotCommand.SemiconductorModuleCommandToolTipText}"/>
+						</ToolTipService.ToolTip>
+					</Button>
+				</Grid>
+
+				<TextBlock Grid.Column="1" Text="{Binding TesterStatus}" Margin="5,0,0,3" VerticalAlignment="Center" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSize}" />
+				
+				<Grid Grid.Row="0" Grid.Column="2" Background="{StaticResource FrameBackground}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<Grid Grid.Column="0" x:Name="InlineQAGrid" Margin="0,0,0,3" Visibility="{Binding InlineQAEnabled, Converter={StaticResource BoolToVis}}">
+						<Grid.Resources>
+							<Style TargetType="TextBlock" />
+						</Grid.Resources>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<Grid Grid.Column="0" x:Name="InlineQAWarningBlock" Width="32" Height="32" HorizontalAlignment="Left">
+							<Rectangle>
+								<Rectangle.Style>
+									<Style TargetType="Rectangle">
+										<Style.Triggers>
+											<DataTrigger Binding="{Binding QAWarning, Mode=OneWay}" Value="True">
+												<Setter Property="Fill" Value="{StaticResource WarningColor}"/>
+											</DataTrigger>
+											<DataTrigger Binding="{Binding QAWarning, Mode=OneWay}" Value="False">
+												<Setter Property="Fill" Value="Green"/>
+											</DataTrigger>
+										</Style.Triggers>
+									</Style>
+								</Rectangle.Style>
+							</Rectangle>
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Content="{Binding}" Margin="0,4,8,0">
+								<ContentPresenter.Style>
+									<Style TargetType="ContentPresenter">
+										<Style.Triggers>
+											<DataTrigger Binding="{Binding QAWarning, Mode=OneWay}" Value="True">
+												<Setter Property="ContentTemplate" Value="{StaticResource ExclamationTemplate}" />
+												<Setter Property="RenderTransform">
+													<Setter.Value>
+														<TransformGroup>
+															<ScaleTransform ScaleX="0.75" ScaleY="0.75" />
+															<TranslateTransform X="5" Y="-1" />
+														</TransformGroup>
+													</Setter.Value>
+												</Setter>
+											</DataTrigger>
+											<DataTrigger Binding="{Binding QAWarning, Mode=OneWay}" Value="False">
+												<Setter Property="ContentTemplate" Value="{StaticResource CheckMarkTemplate}" />
+												<Setter Property="RenderTransform">
+													<Setter.Value>
+														<TransformGroup>
+															<ScaleTransform ScaleX="0.75" ScaleY="0.75" />
+															<TranslateTransform X="7" Y="-1" />
+														</TransformGroup>
+													</Setter.Value>
+												</Setter>
+											</DataTrigger>
+										</Style.Triggers>
+									</Style>
+								</ContentPresenter.Style>
+							</ContentPresenter>
+						</Grid>
+						<TextBlock Grid.Column="1" Text="{Binding InlineQAPartCountStatistics.Failed, Mode=OneWay, StringFormat=[{0}]}" VerticalAlignment="Center" Margin="5,0,0,3"/>
+						<TextBlock Grid.Column="2" x:Name="QAFailedLabel" Text="INLINE_QA_FAILURES" Margin="4,0,24,0" HorizontalAlignment="Left" VerticalAlignment="Center" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSize}"/>
+					</Grid>
+					<TextBlock Grid.Column="1" Text="{Binding UserLevelDisplayName}" VerticalAlignment="Center" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSizeSmall}" TextTrimming="CharacterEllipsis" ToolTip="{Binding UserLevelDisplayName}" HorizontalAlignment="Right"/>
+					<Button Grid.Column="2" VerticalAlignment="Center" Margin="10,0,0,0" ContextMenuService.Placement="Bottom" local:ContextMenuLeftClickBehavior.IsLeftClickEnabled="True" x:Name="UserIcon">
+						<Button.Content>
+							<ContentPresenter Content="{DynamicResource UserIcon}" />
+						</Button.Content>
+						<Button.ContextMenu>
+							<ContextMenu x:Name="LogInLogOutContextMenu" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" FontSize="{StaticResource ContentFontSize}" FontFamily="{StaticResource ContentFont}" Closed="LogInLogOutContextMenu_Closed" Opened="LogInLogOutContextMenu_Opened">
+								<MenuItem x:Name="LogInLogOutMenuItem" Visibility="{Binding VisibilityWhenUserIsNotElevated}" Header="{Binding LoginLogoutCommandText}" Command="{Binding LoginLogoutCommand}" Margin="0,16,0,11">
+									<ToolTipService.ToolTip>
+										<TextBlock Text="{Binding LoginLogoutCommand.SemiconductorModuleCommandToolTipText}"/>
+									</ToolTipService.ToolTip>
+								</MenuItem>
+								<Separator Margin="0,0,0,8" Visibility="{Binding VisibilityWhenUserCanElevate}"/>
+								<!-- If the user is elevated, require them to revert privileges to the original user instead of logging out.
+							This requires a custom event handler instead of binding directly to LoginLogoutCommand. -->
+								<MenuItem x:Name="RevertUserMenuItem" Header="REVERT_USER" Click="RevertUser_Click" Margin="0,16,0,11" Visibility="{Binding VisibilityWhenUserIsElevated}" />
+								<MenuItem x:Name="ElevateUserMenuItem" Header="ELEVATE_USER" Margin="0,16,0,11" Visibility="{Binding VisibilityWhenUserCanElevate}" Click="AnimateLoginPrompt" StaysOpenOnClick="True" />
+								<MenuItem x:Name="EnterCredentialsMenuItem" MaxHeight="0" StaysOpenOnClick="True">
+									<MenuItem.Template>
+										<!-- Have to override the ControlTemplate so that the background does not change on mouseover -->
+										<ControlTemplate TargetType="MenuItem">
+											<Border Background="{TemplateBinding Background}">
+												<ContentPresenter Content="{TemplateBinding Header}" />
+											</Border>
+										</ControlTemplate>
+									</MenuItem.Template>
+									<MenuItem.Header>
+										<StackPanel Width="300" Margin="10" KeyDown="OnEnterCredentialsKeyDown">
+											<TextBlock x:Name="UserLabel" Text="USER" />
+											<TextBox x:Name="UserNameBox"/>
+											<TextBlock x:Name="PasswordLabel" Text="PASSWORD"/>
+											<PasswordBox x:Name="PasswordBox" />
+											<TextBlock x:Name="InvalidMessage" Visibility="Hidden" Text="INVALID_PASSWORD" Margin="0,4" TextWrapping="Wrap" Foreground="Red" MaxWidth="275"/>
+											<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+												<Button x:Name="ElevateUserButton" Margin="5,0" Click="ElevateUser_Click">
+													<Button.Content>
+														<Border HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5,1" BorderThickness="0.5" BorderBrush="{StaticResource TextColor}">
+															<TextBlock Text="OK" Foreground="{StaticResource TextColor}" FontSize="10pt" Margin="0,0,0,2" Width="50" TextAlignment="Center"/>
+														</Border>
+													</Button.Content>
+												</Button>
+											</StackPanel>
+										</StackPanel>
+									</MenuItem.Header>
+								</MenuItem>
+							</ContextMenu>
+						</Button.ContextMenu>
+					</Button>
+				</Grid>
+			</Grid>
+
+			<Grid Grid.Row="1" Grid.IsSharedSizeScope="True" x:Name="MainGrid" IsEnabled="{Binding LoggedIn}" IsEnabledChanged="MainGrid_IsEnabledChanged">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" MinWidth="{Binding Path=DesiredSize.Width, ElementName=YieldCard}"/>
+					<ColumnDefinition Width="*" MinWidth="{Binding Path=DesiredSize.Width, ElementName=TimeCard}"/>
+					<ColumnDefinition Width="*" MinWidth="{Binding Path=DesiredSize.Width, ElementName=TestSettingsCard}"/>
+				</Grid.ColumnDefinitions>
+
+				<!-- TestStand Manager Controls -->
+				<WindowsFormsHost Name="ApplicationManagerHost" Visibility="Collapsed" />
+				<WindowsFormsHost Name="SequenceFileViewManagerHost" Visibility="Collapsed" />
+
+				<Grid Grid.Row="0" Grid.Column="0" x:Name="YieldCard" Margin="0,0,64,0" MinHeight="{StaticResource MinCardHeight}">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" MinHeight="40"/>
+						<RowDefinition Height="{StaticResource RowHeight}"/>
+						<RowDefinition Height="{Binding WaferRowHeight}" />
+						<RowDefinition Height="{StaticResource RowHeight}"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" MinWidth="70" />
+						<ColumnDefinition Width="Auto" MinWidth="80" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<Rectangle Grid.Row="0" Grid.ColumnSpan="3" Height="{StaticResource DividerHeight}" Fill="{StaticResource FrameColor}" Margin="{StaticResource CardDividerMargin}" />
+					<TextBlock Name="YieldLabel" Foreground="{StaticResource TextColor}" Grid.Row="1" Grid.Column="0" Text="YIELD" FontSize="{StaticResource SectionLabelSize}" FontFamily="{DynamicResource SectionLabelFont}" Margin="{StaticResource CardLabelMargin}"/>
+					<TextBlock Name="LotLabel" Text="LOT" Foreground="{StaticResource TextColor}" Grid.Row="2" Grid.Column="0" Margin="{StaticResource CardSubLabelMargin}" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSize}" VerticalAlignment="Bottom"/>
+					<StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+						<TextBlock Text="{Binding AllSitePartCountStatistics.Yield, StringFormat={}{0:0}}" LineHeight="1" LineStackingStrategy="BlockLineHeight" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource AllSiteStatisticsFontSize}" VerticalAlignment="Bottom" Margin="0,0,0,8"/>
+						<TextBlock Name="LotPercentLabel" Text="BIN_PERCENTAGE" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource ContentFontSizeSmall}" LineHeight="1" LineStackingStrategy="BlockLineHeight" VerticalAlignment="Bottom" Margin="0,0,0,8"/>
+					</StackPanel>
+					<StackPanel Grid.Row="2" Grid.Column="2" Margin="{StaticResource SliderColumnMargin}" VerticalAlignment="Bottom">
+						<StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+							<StackPanel.Resources>
+								<Style TargetType="TextBlock">
+									<Setter Property="FontFamily" Value="{StaticResource ContentFont}" />
+									<Setter Property="FontSize" Value="{StaticResource ContentFontSizeSmall}" />
+									<Setter Property="Foreground" Value="{StaticResource TextColor}" />
+								</Style>
+							</StackPanel.Resources>
+							<TextBlock Text="{Binding AllSitePartCountStatistics.Passed}" />
+							<TextBlock Text=" " />
+							<TextBlock Name="LotPassedLabel" Text="PASSED" />
+							<TextBlock Text=" / " />
+							<TextBlock Text="{Binding AllSitePartCountStatistics.Total}" />
+							<TextBlock Text=" " />
+							<TextBlock Name="LotTestedLabel" Text="TESTED" />
+						</StackPanel>
+						<local:SemiconductorModuleSlider Value="{Binding AllSitePartCountStatistics.Yield}" />
+					</StackPanel>
+
+					<TextBlock Name="WaferLabel" Text="WAFER" Grid.Row="3" Grid.Column="0" Margin="{StaticResource CardSubLabelMargin}" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSize}" VerticalAlignment="Bottom" Visibility="{Binding WaferVisibility}"/>
+					<StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Visibility="{Binding WaferVisibility}">
+						<TextBlock Text="{Binding WaferPartCountStatistics.Yield, StringFormat={}{0:0}}" LineHeight="1" LineStackingStrategy="BlockLineHeight" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource AllSiteStatisticsFontSize}" VerticalAlignment="Bottom" Margin="0,0,0,8"/>
+						<TextBlock Name="WaferPercentLabel" Text="BIN_PERCENTAGE" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource ContentFontSizeSmall}" LineHeight="1" LineStackingStrategy="BlockLineHeight" VerticalAlignment="Bottom" Margin="0,0,0,8" />
+					</StackPanel>
+					<StackPanel Grid.Row="3" Grid.Column="2" Margin="8,0,0,8" VerticalAlignment="Bottom" Visibility="{Binding WaferVisibility}">
+						<StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+							<StackPanel.Resources>
+								<Style TargetType="TextBlock">
+									<Setter Property="FontFamily" Value="{StaticResource ContentFont}" />
+									<Setter Property="FontSize" Value="{StaticResource ContentFontSizeSmall}" />
+									<Setter Property="Foreground" Value="{StaticResource TextColor}" />
+								</Style>
+							</StackPanel.Resources>
+							<TextBlock Text="{Binding WaferPartCountStatistics.Passed}" />
+							<TextBlock Text=" " />
+							<TextBlock Name="WaferPassedLabel" Text="PASSED" />
+							<TextBlock Text=" / " />
+							<TextBlock Text="{Binding WaferPartCountStatistics.Total}" />
+							<TextBlock Text=" " />
+							<TextBlock Name="WaferTestedLabel" Text="TESTED" />
+						</StackPanel>
+						<local:SemiconductorModuleSlider Value="{Binding WaferPartCountStatistics.Yield}" />
+					</StackPanel>
+
+					<TextBlock Name="LastNLabel" Text="{Binding LastNString}" Grid.Row="4" Grid.Column="0" Margin="{StaticResource CardSubLabelMargin}" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSize}" VerticalAlignment="Bottom" />
+					<StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+						<TextBlock Text="{Binding WindowSitePartCountStatistics.Yield, StringFormat={}{0:0}}" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource AllSiteStatisticsFontSize}" VerticalAlignment="Bottom" Margin="0,0,0,8" LineHeight="1" LineStackingStrategy="BlockLineHeight"/>
+						<TextBlock Name="LastNPercentLabel" Text="BIN_PERCENTAGE" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource ContentFontSizeSmall}" VerticalAlignment="Bottom" Margin="0,0,0,8" LineHeight="1" LineStackingStrategy="BlockLineHeight"/>
+					</StackPanel>
+					<StackPanel Grid.Row="4" Grid.Column="2" Margin="8,0,0,8" VerticalAlignment="Bottom">
+						<StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+							<StackPanel.Resources>
+								<Style TargetType="TextBlock">
+									<Setter Property="FontFamily" Value="{StaticResource ContentFont}" />
+									<Setter Property="FontSize" Value="{StaticResource ContentFontSizeSmall}" />
+									<Setter Property="Foreground" Value="{StaticResource TextColor}" />
+								</Style>
+							</StackPanel.Resources>
+							<TextBlock Text="{Binding WindowSitePartCountStatistics.Passed}" />
+							<TextBlock Text=" " />
+							<TextBlock Name="WindowPassedLabel" Text="PASSED" />
+							<TextBlock Text=" / " />
+							<TextBlock Text="{Binding WindowSitePartCountStatistics.Total}" />
+							<TextBlock Text=" " />
+							<TextBlock Name="WindowTestedLabel" Text="TESTED" />
+						</StackPanel>
+						<local:SemiconductorModuleSlider Value="{Binding WindowSitePartCountStatistics.Yield}" />
+					</StackPanel>
+				</Grid>
+				<Grid Grid.Row="0" Grid.Column="1" x:Name="TimeCard" Margin="0,0,64,0" MinHeight="{StaticResource MinCardHeight}">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" MinHeight="40"/>
+						<RowDefinition Height="{StaticResource RowHeight}"/>
+						<RowDefinition Height="{StaticResource RowHeight}"/>
+						<RowDefinition Height="{StaticResource RowHeight}"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" MinWidth="70" />
+						<ColumnDefinition Width="Auto" MinWidth="80" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<Rectangle Grid.Row="0" Grid.ColumnSpan="3" Fill="{StaticResource FrameColor}" Height="{StaticResource DividerHeight}" Margin="{StaticResource CardDividerMargin}" />
+					<TextBlock x:Name="TimeLabel" Grid.Row="1" Grid.Column="0" Text="TIME" FontSize="{StaticResource SectionLabelSize}" FontFamily="{StaticResource SectionLabelFont}" Margin="{StaticResource CardLabelMargin}"/>
+					<TextBlock Name="SocketTimeLabel" Text="SOCKET" Grid.Row="2" Grid.Column="0" Margin="{StaticResource CardSubLabelMargin}" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSize}" VerticalAlignment="Bottom"/>
+					<StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+						<TextBlock Text="{Binding AverageSocketTime, StringFormat={}{0:0}}" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource AllSiteStatisticsFontSize}" VerticalAlignment="Bottom" Margin="0,0,0,8" LineHeight="1" LineStackingStrategy="BlockLineHeight"/>
+						<TextBlock Name="SocketTimeUnitsLabel" Text="UNIT_MILLISECONDS" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource ContentFontSizeSmall}" VerticalAlignment="Bottom" Margin="0,0,0,8" LineHeight="1" LineStackingStrategy="BlockLineHeight"/>
+					</StackPanel>
+					<local:SemiconductorModuleSlider Grid.Row="2" Grid.Column="2" x:Name="SocketTimeSlider" Value="{Binding AverageSocketTime}" MaxValue="{Binding TimingSliderMaximum}" 
+											VerticalAlignment="Bottom" Margin="{StaticResource SliderColumnMargin}" />
+
+					<TextBlock Name="IndexTimeLabel" Text="INDEX" Grid.Row="3" Grid.Column="0" Margin="{StaticResource CardSubLabelMargin}" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSize}" VerticalAlignment="Bottom"/>
+					<StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" >
+						<TextBlock Text="{Binding AverageIndexTime, StringFormat={}{0:0}}" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource AllSiteStatisticsFontSize}" VerticalAlignment="Bottom" Margin="0,0,0,8" LineHeight="1" LineStackingStrategy="BlockLineHeight"/>
+						<TextBlock Name="IndexTimeUnitsLabel" Text="UNIT_MILLISECONDS" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource ContentFontSizeSmall}" VerticalAlignment="Bottom" Margin="0,0,0,8" LineHeight="1" LineStackingStrategy="BlockLineHeight"/>
+					</StackPanel>
+					<local:SemiconductorModuleSlider Grid.Row="3" Grid.Column="2" Value="{Binding AverageIndexTime}" MinValue="{Binding AverageSocketTime}" MaxValue="{Binding TimingSliderMaximum}" VerticalAlignment="Bottom" Margin="{StaticResource SliderColumnMargin}" />
+
+					<TextBlock Name="CycleTimeLabel" Text="CYCLE" Grid.Row="4" Grid.Column="0" Margin="{StaticResource CardSubLabelMargin}" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSize}" VerticalAlignment="Bottom"/>
+					<StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" >
+						<TextBlock Text="{Binding AverageCycleTime, StringFormat={}{0:0}}" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource AllSiteStatisticsFontSize}" VerticalAlignment="Bottom" Margin="0,0,0,8" LineHeight="1" LineStackingStrategy="BlockLineHeight"/>
+						<TextBlock Name="CycleTimeUnitsLabel" Text="UNIT_MILLISECONDS" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource ContentFontSizeSmall}" VerticalAlignment="Bottom" Margin="0,0,0,8" LineHeight="1" LineStackingStrategy="BlockLineHeight"/>
+					</StackPanel>
+					<local:SemiconductorModuleSlider Grid.Row="4" Grid.Column="2" Value="{Binding AverageCycleTime}" MaxValue="{Binding TimingSliderMaximum}" VerticalAlignment="Bottom" Margin="{StaticResource SliderColumnMargin}" />
+				</Grid>
+				<Grid Grid.Row="0" Grid.Column="2" x:Name="TestSettingsCard" Grid.IsSharedSizeScope="True" VerticalAlignment="Top" Panel.ZIndex="1" Background="{StaticResource FrameBackground}"
+				  MinHeight="{StaticResource MinCardHeight}" MaxHeight="{Binding ElementName=TimeCard, Path=ActualHeight}">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="1"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" SharedSizeGroup="A"/>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+					<Rectangle Grid.Row="0" Grid.ColumnSpan="3" Height="{StaticResource DividerHeight}" Fill="{StaticResource FrameColor}" Margin="{StaticResource CardDividerMargin}"/>
+					<TextBlock x:Name="TestSettingsLabel" Grid.Row="1" Grid.Column="0" Text="TEST_SETTINGS" FontSize="{StaticResource SectionLabelSize}" FontFamily="{StaticResource SectionLabelFont}" Margin="{StaticResource CardLabelMargin}"/>
+					<Button Grid.Row="1" Grid.Column="2" x:Name="ShowMoreButton" Click="ShowMoreButton_Click" Visibility="{Binding ShowMoreVisible}" Content="SHOW_MORE">
+						<Button.Template>
+							<ControlTemplate TargetType="Button">
+								<Border Background="{TemplateBinding Background}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5,1" BorderThickness="1" BorderBrush="{StaticResource FrameColor}">
+									<TextBlock Text="{TemplateBinding Content}" Foreground="{StaticResource FrameColor}" FontSize="{StaticResource ContentFontSizeSmall}" FontFamily="{StaticResource ContentFont}" Margin="0,0,0,2"/>
+								</Border>
+							</ControlTemplate>
+						</Button.Template>
+					</Button>
+
+					<Grid Grid.Row="2" Grid.ColumnSpan="3" Margin="5,16,0,8">
+						<ItemsControl ItemsSource="{Binding TestProgramInfoCollection}">
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<Grid>
+										<Grid.Resources>
+											<Style TargetType="TextBlock">
+												<Setter Property="ToolTipService.ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(TextBlock.Text)}" />
+												<Setter Property="TextTrimming" Value="CharacterEllipsis" />
+											</Style>
+										</Grid.Resources>
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="Auto" SharedSizeGroup="A" />
+											<ColumnDefinition Width="Auto" SharedSizeGroup="B" />
+										</Grid.ColumnDefinitions>
+										<TextBlock Grid.Column="0" Text="{Binding Name}" Margin="0,0,40,0" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource DataContentFontSize}"  Foreground="{StaticResource TextColor}" />
+										<TextBlock Grid.Column="1" Text="{Binding Value}" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSizeSmall}"  Foreground="{StaticResource TextColor}" />
+									</Grid>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+					</Grid>
+					<Rectangle Grid.Row="3" Grid.ColumnSpan="3" x:Name="TestSettingsExpandedBottomLine" Fill="{StaticResource FrameColor}" Margin="8,0,0,0" Visibility="Hidden"/>
+				</Grid>
+
+				<Rectangle Grid.Row="1" Grid.ColumnSpan="3" Height="1" Fill="{StaticResource FrameColor}" Margin="{StaticResource MiddleDividerMargin}" />
+				<Grid x:Name="DetailsGrid" Grid.ColumnSpan="3" Grid.Row="2" Margin="5,0,5,0" Visibility="{Binding LotConfigured, Converter={StaticResource BoolToVis}}">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+					</Grid.RowDefinitions>
+					<Grid Grid.Row="0" x:Name="DetailsControls" Margin="0,4,0,20">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<Grid Grid.Column="0">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="200"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Row="0" x:Name="FailureAnalysisLabel" Text="FAILURE_ANALYSIS" FontSize="{StaticResource SectionLabelSize}" FontFamily="{StaticResource SectionLabelFont}" Grid.ColumnSpan="2" Margin="{StaticResource CardLabelMargin}"/>
+							<ComboBox Grid.Column="0" Grid.Row="1" Width="200" x:Name="YieldSelector" SelectedIndex="0" SelectionChanged="YieldSelector_SelectionChanged" MinWidth="200" HorizontalAlignment="Left" VerticalAlignment="Center"
+								  FontSize="{StaticResource ContentFontSize}" FontFamily="{StaticResource ContentFont}" Foreground="{StaticResource TextColor}" Margin="0,5,0,0" Style="{StaticResource ComboBoxFlatStyle}">
+								<ComboBox.ItemContainerStyle>
+									<Style TargetType="{x:Type ComboBoxItem}">
+										<Setter Property="FontSize" Value="{StaticResource ContentFontSizeSmall}"/>
+									</Style>
+								</ComboBox.ItemContainerStyle>
+								<ComboBoxItem x:Name="LotYieldItem" Content="LOT"/>
+								<ComboBoxItem x:Name="WaferYieldItem" Content="WAFER" Visibility="{Binding WaferVisibility}"/>
+								<ComboBoxItem x:Name="LastNYieldItem" Content="{Binding LastNString}"/>
+							</ComboBox>
+							<StackPanel Grid.Column="1" Grid.Row="1" x:Name="VisualizationSelector" Orientation="Horizontal" Margin="40,20,0,0" VerticalAlignment="Top">
+								<Border x:Name="GraphsButtonBorder" BorderThickness="2" BorderBrush="{StaticResource HighlightGray}">
+									<Button x:Name="GraphsButton" Content="{StaticResource BarGraphIcon}" Click="GraphsButton_Click" />
+								</Border>
+								<Border x:Name="TableButtonBorder" BorderThickness="0" BorderBrush="{StaticResource HighlightGray}">
+									<Button x:Name="TableButton" Content="{StaticResource TableIcon}" Click="TableButton_Click" IsEnabled="{Binding AdministratorMode}"/>
+								</Border>
+							</StackPanel>
+						</Grid>
+						<DataGrid x:Name="FailureAnalysisLegend" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top"  ItemsSource="{Binding FailureAnalysisRanges}" CanUserResizeColumns="False" CanUserResizeRows="False"
+								  CanUserReorderColumns="False" HeadersVisibility="None" AutoGenerateColumns="False" IsReadOnly="True" Grid.RowSpan="2">
+							<DataGrid.Columns>
+								<DataGridTextColumn Foreground="{StaticResource TextColor}" Binding="{Binding Name}" TextBlock.TextAlignment="Left" TextBlock.FontFamily="{StaticResource DataContentFont}" TextBlock.FontSize="{StaticResource DataContentFontSize}">
+								</DataGridTextColumn>
+								<DataGridTemplateColumn>
+									<DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<Border Margin="0, 1, 0, 1" Height="10">
+												<Rectangle Opacity="{Binding Opacity}" Width="90" Height="{StaticResource DataBarHeight}" Margin="5, 0, 5, 0" Fill="{StaticResource BarColor}" />
+											</Border>
+										</DataTemplate>
+									</DataGridTemplateColumn.CellTemplate>
+								</DataGridTemplateColumn>
+								<DataGridTextColumn Foreground="{StaticResource TextColor}" Binding="{Binding RangeString}" TextBlock.TextAlignment="Left" TextBlock.FontFamily="{StaticResource ContentFont}" TextBlock.FontSize="{StaticResource ContentFontSizeSmall}">
+								</DataGridTextColumn>
+							</DataGrid.Columns>
+							<DataGrid.CellStyle>
+								<Style TargetType="{x:Type DataGridCell}">
+									<Setter Property="Background" Value="{StaticResource FrameBackground}" />
+									<Setter Property="HorizontalAlignment" Value="Left" />
+									<Style.Triggers>
+										<!-- This is a way to prevent the user from selecting the grid at all -->
+										<Trigger Property="DataGridCell.IsSelected" Value="True">
+											<Setter Property="BorderBrush">
+												<Setter.Value>
+													<SolidColorBrush Color="Transparent"/>
+												</Setter.Value>
+											</Setter>
+											<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+											<Setter Property="Background">
+												<Setter.Value>
+													<SolidColorBrush Color="Transparent"/>
+												</Setter.Value>
+											</Setter>
+										</Trigger>
+									</Style.Triggers>
+								</Style>
+							</DataGrid.CellStyle>
+						</DataGrid>
+					</Grid>
+
+					<Grid Grid.Row="1" x:Name="BarGraphViewGrid" Visibility="Visible">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="8*" />
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="8*" />
+						</Grid.ColumnDefinitions>
+						<DataGrid Grid.Column="0" x:Name="SiteFailedGrid" ItemsSource="{Binding SitePartCountStatisticsView}" AutoGenerateColumns="False" IsReadOnly="True" ColumnWidth="Auto" Margin="5,0,0,4"
+						  CanUserResizeColumns="False" CanUserResizeRows="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False" CanUserReorderColumns="False">
+							<DataGrid.Resources>
+								<Style TargetType="{x:Type DataGridColumnHeader}">
+									<Setter Property="ContentTemplate">
+										<Setter.Value>
+											<DataTemplate>
+												<TextBlock Text="{Binding}" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource DataContentFontSize}" />
+											</DataTemplate>
+										</Setter.Value>
+									</Setter>
+									<Setter Property="Foreground" Value="{StaticResource TextColor}" />
+									<Setter Property="Background" Value="{StaticResource FrameBackground}" />
+									<Setter Property="Margin" Value="0,0,15,0" />
+									<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+								</Style>
+								<Style TargetType="{x:Type DataGridRow}">
+									<Setter Property="Background" Value="{StaticResource FrameBackground}"/>
+								</Style>
+							</DataGrid.Resources>
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="DETAILS_SITE" x:Name="SiteFailureSiteColumn" Binding="{Binding SiteNumber}" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSizeSmall}" />
+								<DataGridTextColumn Header="DETAILS_SITEFAILED" x:Name="SiteFailureFailedColumn" Binding="{Binding Failed}" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSizeSmall}" />
+								<DataGridTextColumn Header="DETAILS_PERCENT" x:Name="SiteFailurePercentColumn" Binding="{Binding FailedPercentage, Converter={StaticResource Percentage}, Mode=OneWay}"
+													Width="50" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSizeSmall}"/>
+								<DataGridTemplateColumn Header="DETAILS_SITEFAILRATE" x:Name="SiteFailureRateColumn" Width="*" >
+									<DataGridTemplateColumn.HeaderTemplate>
+										<DataTemplate >
+											<Grid>
+												<Grid.RowDefinitions>
+													<RowDefinition Height="Auto" />
+													<RowDefinition Height="Auto" />
+												</Grid.RowDefinitions>
+												<TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding}" HorizontalAlignment="Left" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource DataContentFontSize}"/>
+												<TextBlock Grid.Column="0" Grid.Row="0" Text="100%" HorizontalAlignment="Right" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource DataContentFontSize}"/>
+												<Rectangle Height="2" MinWidth="280" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Center" Fill="{StaticResource HighlightGray}"/>
+											</Grid>
+										</DataTemplate>
+									</DataGridTemplateColumn.HeaderTemplate>
+									<DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<Grid VerticalAlignment="Center">
+												<ProgressBar Margin="0,0,15,0" Value="{Binding FailedPercentage, Mode=OneWay}" Foreground="{StaticResource BarColor}" Background="Transparent" BorderThickness="0"
+													Opacity="{Binding FailedPercentage, Converter={StaticResource FailureRateToOpacity}, Mode=OneWay}" Height="{StaticResource DataBarHeight}"/>
+											</Grid>
+										</DataTemplate>
+									</DataGridTemplateColumn.CellTemplate>
+								</DataGridTemplateColumn>
+							</DataGrid.Columns>
+							<DataGrid.CellStyle>
+								<Style TargetType="{x:Type DataGridCell}">
+									<Style.Triggers>
+										<!-- This is a way to prevent the user from selecting the grid at all -->
+										<Trigger Property="DataGridCell.IsSelected" Value="True">
+											<Setter Property="BorderBrush">
+												<Setter.Value>
+													<SolidColorBrush Color="Transparent"/>
+												</Setter.Value>
+											</Setter>
+											<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+											<Setter Property="Background">
+												<Setter.Value>
+													<SolidColorBrush Color="Transparent"/>
+												</Setter.Value>
+											</Setter>
+										</Trigger>
+									</Style.Triggers>
+									<Setter Property="FontSize" Value="{StaticResource DataContentFontSize}"/>
+									<Setter Property="FontFamily" Value="{StaticResource DataContentFont}" />
+									<Setter Property="Foreground" Value="{StaticResource TextColor}" />
+								</Style>
+							</DataGrid.CellStyle>
+						</DataGrid>
+						<DataGrid Grid.Column="2" x:Name="BinFailedGrid" ItemsSource="{Binding TestBinsFailurePercentageSortView}"
+							  IsReadOnly="True" AutoGenerateColumns="False" CanUserResizeColumns="True" CanUserResizeRows="False" CanUserAddRows="False"
+							  CanUserDeleteRows="False" CanUserSortColumns="False" CanUserReorderColumns="False" Margin="0,0,5,4">
+							<DataGrid.Resources>
+								<Style TargetType="{x:Type DataGridColumnHeader}">
+									<Setter Property="ContentTemplate">
+										<Setter.Value>
+											<DataTemplate>
+												<TextBlock Text="{Binding}" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource DataContentFontSize}"/>
+											</DataTemplate>
+										</Setter.Value>
+									</Setter>
+									<Setter Property="Foreground" Value="{StaticResource TextColor}" />
+									<Setter Property="Background" Value="{StaticResource FrameBackground}" />
+									<Setter Property="Margin" Value="0,0,15,0" />
+									<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+								</Style>
+								<Style TargetType="{x:Type DataGridRow}">
+									<Setter Property="Background" Value="{StaticResource FrameBackground}"/>
+								</Style>
+							</DataGrid.Resources>
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="DETAILS_BIN" Binding="{Binding BinNumber}" x:Name="BinFailureBinColumn" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSizeSmall}"/>
+								<DataGridTextColumn Header="DETAILS_NAME" Binding="{Binding BinName}" x:Name="BinFailureNameColumn" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSizeSmall}"/>
+								<DataGridTextColumn Header="DETAILS_COUNT" Binding="{Binding PartCount}" x:Name="BinFailureCountColumn" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSizeSmall}"/>
+								<DataGridTextColumn Header="DETAILS_PERCENT" Binding="{Binding PercentOfTotal, Converter={StaticResource Percentage}, Mode=OneWay}"
+													Width="50" x:Name="BinFailurePercentColumn" FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSizeSmall}"/>
+								<DataGridTemplateColumn Header="DETAILS_BINFAILRATE" x:Name="BinFailureRateColumn" Width="*">
+									<DataGridTemplateColumn.HeaderTemplate>
+										<DataTemplate>
+											<Grid>
+												<Grid.RowDefinitions>
+													<RowDefinition Height="Auto" />
+													<RowDefinition Height="Auto" />
+												</Grid.RowDefinitions>
+												<TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding}" HorizontalAlignment="Left" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource DataContentFontSize}"/>
+												<TextBlock Grid.Column="0" Grid.Row="0" Text="100%" HorizontalAlignment="Right" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource DataContentFontSize}"/>
+												<Rectangle Height="2" MinWidth="1" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Center" Fill="{StaticResource HighlightGray}"/>
+											</Grid>
+										</DataTemplate>
+									</DataGridTemplateColumn.HeaderTemplate>
+									<DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<Grid VerticalAlignment="Center">
+												<ProgressBar Margin="0,0,15,0" Value="{Binding PercentOfTotal, Mode=OneWay}" Foreground="{StaticResource BarColor}" Background="Transparent" BorderThickness="0"
+													Opacity="{Binding PercentOfTotal, Converter={StaticResource FailureRateToOpacity}, Mode=OneWay}" Height="{StaticResource DataBarHeight}"/>
+											</Grid>
+										</DataTemplate>
+									</DataGridTemplateColumn.CellTemplate>
+								</DataGridTemplateColumn>
+							</DataGrid.Columns>
+							<DataGrid.CellStyle>
+								<Style TargetType="{x:Type DataGridCell}">
+									<Style.Triggers>
+										<!-- This is a way to prevent the user from selecting the grid at all -->
+										<Trigger Property="DataGridCell.IsSelected" Value="True">
+											<Setter Property="BorderBrush">
+												<Setter.Value>
+													<SolidColorBrush Color="Transparent"/>
+												</Setter.Value>
+											</Setter>
+											<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+											<Setter Property="Background">
+												<Setter.Value>
+													<SolidColorBrush Color="Transparent"/>
+												</Setter.Value>
+											</Setter>
+										</Trigger>
+									</Style.Triggers>
+									<Setter Property="FontSize" Value="{StaticResource ContentFontSizeSmall}"/>
+									<Setter Property="FontFamily" Value="{StaticResource ContentFont}" />
+									<Setter Property="Foreground" Value="{StaticResource TextColor}" />
+									<Setter Property="Margin" Value="0,0,15,0" />
+								</Style>
+							</DataGrid.CellStyle>
+						</DataGrid>
+					</Grid>
+					<DataGrid Grid.Row="1" x:Name="SiteBinFailureRateDataGrid" Visibility="Hidden" ItemsSource="{Binding SiteBinDataTable}" IsReadOnly="True" HorizontalAlignment="Left" FrozenColumnCount="3" ColumnWidth="Auto"
+					AutoGenerateColumns="True" AutoGeneratingColumn="SiteBinFailureRateDataGrid_AutoGeneratingColumn" CanUserResizeRows="False" CanUserResizeColumns="False" AutoGeneratedColumns="SiteBinFailureRateDataGrid_AutoGeneratedColumns" Margin="5,0,5,32">
+						<DataGrid.Resources>
+							<Style x:Key="DefaultDataGridColumnHeader" TargetType="{x:Type DataGridColumnHeader}">
+								<Setter Property="ContentTemplate">
+									<Setter.Value>
+										<DataTemplate>
+											<TextBlock Text="{Binding}" HorizontalAlignment="Stretch" FontFamily="{StaticResource DataContentFont}" FontSize="{StaticResource DataContentFontSize}" />
+										</DataTemplate>
+									</Setter.Value>
+								</Setter>
+								<Setter Property="Margin" Value="0,0,15,0"/>
+								<Setter Property="HorizontalAlignment" Value="Stretch"/>
+								<Setter Property="HorizontalContentAlignment" Value="Center"/>
+								<Setter Property="Foreground" Value="{StaticResource TextColor}" />
+								<Setter Property="Background" Value="{StaticResource FrameBackground}" />
+							</Style>
+							<Style x:Key="SiteDataGridColumnHeader" BasedOn="{StaticResource DefaultDataGridColumnHeader}" TargetType="{x:Type DataGridColumnHeader}">
+								<Setter Property="Margin" Value="0,0,0,0"/>
+							</Style>
+							<Style x:Key="SiteDataGridColumnHeaderBordered" BasedOn="{StaticResource SiteDataGridColumnHeader}" TargetType="{x:Type DataGridColumnHeader}">
+								<Setter Property="BorderBrush" Value="{StaticResource LightBlue}" />
+								<Setter Property="BorderThickness" Value="1,0,1,0" />
+							</Style>
+							<Style x:Key="DefaultCellStyle" TargetType="{x:Type DataGridCell}">
+								<Style.Triggers>
+									<!-- This is a way to prevent the user from selecting the grid at all -->
+									<Trigger Property="DataGridCell.IsSelected" Value="True">
+										<Setter Property="BorderBrush">
+											<Setter.Value>
+												<SolidColorBrush Color="Transparent"/>
+											</Setter.Value>
+										</Setter>
+										<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+										<Setter Property="Background">
+											<Setter.Value>
+												<SolidColorBrush Color="Transparent"/>
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+									<!-- Resets the border color after unselected -->
+									<Trigger Property="DataGridCell.IsSelected" Value="False">
+										<Setter Property="BorderBrush">
+											<Setter.Value>
+												<SolidColorBrush Color="Transparent"/>
+											</Setter.Value>
+										</Setter>
+									</Trigger>
+								</Style.Triggers>
+								<Setter Property="FontSize" Value="{StaticResource ContentFontSizeSmall}"/>
+								<Setter Property="FontFamily" Value="{StaticResource ContentFont}" />
+								<Setter Property="Foreground" Value="{StaticResource TextColor}" />
+								<Setter Property="Background" Value="{StaticResource FrameBackground}" />
+								<Setter Property="HorizontalAlignment" Value="Left"/>
+								<Setter Property="Margin" Value="0,-1"/>
+							</Style>
+							<Style x:Key="BinNamesCellStyle" BasedOn="{StaticResource DefaultCellStyle}" TargetType="{x:Type DataGridCell}">
+								<Setter Property="Template">
+									<Setter.Value>
+										<ControlTemplate TargetType="{x:Type DataGridCell}">
+											<Border Name="DataGridCellBorder">
+												<ContentControl Content="{TemplateBinding Content}">
+													<ContentControl.ContentTemplate>
+														<DataTemplate>
+															<TextBlock Background="Transparent" TextTrimming="CharacterEllipsis" Text="{Binding Text}">
+																<TextBlock.ToolTip>
+																	<ToolTip>
+																		<TextBlock FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSizeSmall}" Text="{Binding Text}" />
+																	</ToolTip>
+																</TextBlock.ToolTip>
+															</TextBlock>
+														</DataTemplate>
+													</ContentControl.ContentTemplate>
+												</ContentControl>
+											</Border>
+										</ControlTemplate>
+									</Setter.Value>
+								</Setter>
+							</Style>
+							<Style x:Key="FailureRateSquareCellStyle" BasedOn="{StaticResource DefaultCellStyle}" TargetType="{x:Type DataGridCell}">
+								<Setter Property="HorizontalAlignment" Value="Center"/>
+								<EventSetter Event="MouseEnter" Handler="DataGridCell_MouseEnter"/>
+								<EventSetter Event="MouseLeave" Handler="DataGridCell_MouseLeave"/>
+								<Style.Triggers>
+									<Trigger Property="IsMouseOver" Value="True">
+										<Setter Property="Background" Value="{StaticResource LightBlue}"/>
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+							<Style x:Key="FailureRateSquareCellStyleBordered" BasedOn="{StaticResource FailureRateSquareCellStyle}" TargetType="{x:Type DataGridCell}">
+								<Setter Property="BorderBrush" Value="{StaticResource LightBlue}" />
+								<Setter Property="BorderThickness" Value="1,0,1,0" />
+								<Style.Triggers>
+									<!-- Ensure formatting is maintained on select or unselect -->
+									<Trigger Property="DataGridCell.IsSelected" Value="True">
+										<Setter Property="BorderBrush" Value="{StaticResource LightBlue}"/>
+									</Trigger>
+									<Trigger Property="DataGridCell.IsSelected" Value="False">
+										<Setter Property="BorderBrush" Value="{StaticResource LightBlue}"/>
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+							<Style TargetType="DataGridRow">
+								<Setter Property="BorderThickness" Value="0,1,0,1" />
+								<Setter Property="Background" Value="{StaticResource FrameBackground}"/>
+								<EventSetter Event="MouseEnter" Handler="DataGridRow_MouseEnter"/>
+								<EventSetter Event="MouseLeave" Handler="DataGridRow_MouseLeave"/>
+							</Style>
+							<DataTemplate x:Key="FailureRateSquareTemplate">
+								<Grid HorizontalAlignment="Left">
+									<Border Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.FailureRateTableCellWidth}" 
+									Margin="1"
+									BorderThickness="2" BorderBrush="White" Background="White" 
+									Height="20"
+										ToolTipOpening="FailureSquareToolTipOpening"
+										MouseEnter="FailureSquareMouseEnter" MouseLeave="FailureSquareMouseLeave">
+										<Border.ToolTip>
+											<ToolTip>
+												<TextBlock FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSizeSmall}" Text="{Binding TooltipText}" />
+											</ToolTip>
+										</Border.ToolTip>
+										<Rectangle Fill="{StaticResource BarColor}" Stroke="Transparent" Opacity="{Binding FailurePercentage, Converter={StaticResource FailureRateToOpacity}, Mode=OneWay}"/>
+									</Border>
+								</Grid>
+							</DataTemplate>
+							<DataTemplate x:Key="AllSitesFailureRateSquareTemplate">
+								<Grid HorizontalAlignment="Left">
+									<Border Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.AllSitesFailureRateTableCellWidth}"
+									Margin="1"
+									BorderThickness="2" BorderBrush="White" Background="White" 
+									Height="20" ToolTipOpening="FailureSquareToolTipOpening"
+										MouseEnter="FailureSquareMouseEnter" MouseLeave="FailureSquareMouseLeave">
+										<Border.ToolTip>
+											<ToolTip>
+												<TextBlock FontFamily="{StaticResource ContentFont}" FontSize="{StaticResource ContentFontSizeSmall}" Text="{Binding TooltipText}" />
+											</ToolTip>
+										</Border.ToolTip>
+										<Rectangle Fill="{StaticResource BarColor}" Stroke="Transparent" Opacity="{Binding FailurePercentage, Converter={StaticResource FailureRateToOpacity}, Mode=OneWay}"/>
+									</Border>
+								</Grid>
+							</DataTemplate>
+							<Style x:Key="{ComponentResourceKey ResourceId=DataGridSelectAllButtonStyle, TypeInTargetAssembly={x:Type DataGrid}}" TargetType="{x:Type Button}">
+								<Setter Property="Template">
+									<Setter.Value>
+										<ControlTemplate TargetType="{x:Type Button}">
+											<Grid Background="{StaticResource FrameBackground}"/>
+										</ControlTemplate>
+									</Setter.Value>
+								</Setter>
+							</Style>
+						</DataGrid.Resources>
+					</DataGrid>
+				</Grid>
+			</Grid>
+		</Grid>
+	</Grid>
+</Window>

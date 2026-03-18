@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="STSOperatorTool.SemiconductorModuleSlider"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+		xmlns:sys="clr-namespace:System;assembly=mscorlib"
+		mc:Ignorable="d"
+		MinWidth="100"
+	>
+	<UserControl.Resources>
+		<sys:Double x:Key="ScaleWidth">15</sys:Double>
+		<sys:Double x:Key="ScaleHeight">1</sys:Double>
+		<Thickness x:Key="ScaleMargin">1,0</Thickness>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		
+		<Rectangle Grid.Row="1" Height="{StaticResource DataBarHeight}" Fill="{StaticResource BarColor}" HorizontalAlignment="Left"
+				   Width="{Binding ValueRectangleWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" 
+				   Margin="{Binding ValueRectangleMargin, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"/>
+		<Rectangle Grid.Row="1" Stroke="{StaticResource HighlightGray}" StrokeThickness="{StaticResource DataBarUnderlineHeight}" VerticalAlignment="Bottom"/>
+    </Grid>
+</UserControl>
